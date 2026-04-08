@@ -1,0 +1,30 @@
+[
+    {
+        "ma_nganh": "7480201",
+        "ten_nganh": "Công nghệ thông tin",
+        "to_hop_xet_tuyen": ["A00", "A01", "D01"],
+        "diem_chuan_nam_truoc": 25.5,
+        "chi_tieu": 120
+    },
+    {
+        "ma_nganh": "7480104",
+        "ten_nganh": "Hệ thống thông tin",
+        "to_hop_xet_tuyen": ["A00", "A01", "D07"],
+        "diem_chuan_nam_truoc": 24.25,
+        "chi_tieu": 80
+    },
+    {
+        "ma_nganh": "7480103",
+        "ten_nganh": "Kỹ thuật phần mềm",
+        "to_hop_xet_tuyen": ["A00", "A01", "D01"],
+        "diem_chuan_nam_truoc": 26.0,
+        "chi_tieu": 100
+    },
+    {
+        "ma_nganh": "7340101",
+        "ten_nganh": "Quản trị kinh doanh",
+        "to_hop_xet_tuyen": ["A00", "D01", "D07"],
+        "diem_chuan_nam_truoc": 23.5,
+        "chi_tieu": 150
+    }
+]
