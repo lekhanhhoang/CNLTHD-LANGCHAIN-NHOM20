@@ -1,62 +1,94 @@
-from langgraph.graph import StateGraph, END
-from langgraph.checkpoint.memory import MemorySaver
-from langgraph.prebuilt import create_react_agent
-from langchain_google_genai import ChatGoogleGenerativeAI
+import os
 from dotenv import load_dotenv
+from typing import Literal
+
+from langgraph.graph import StateGraph, START, END
+from langgraph.prebuilt import ToolNode
+from langgraph.checkpoint.memory import MemorySaver
+from langchain_openai import ChatOpenAI
+from langchain_core.messages import SystemMessage
 
 from src.graph.state import AgentState
-from src.agents.supervisor import supervisor_node
-from src.tools.google_calendar import get_calendar_tools
-from src.tools.web_search import web_search_tool
-from src.tools.rag_tool import consult_guidelines
-from src.tools.user_db import get_user_info
-from langchain_openai import ChatOpenAI
-import os
+from src.tools.admissions_tools import admissions_tools
 
+# Load environment variables
 load_dotenv()
+
+# 1. Khởi tạo LLM và Bind Tools
 hf_token = os.environ.get("HF_TOKEN")
 llm = ChatOpenAI(
-        base_url="https://router.huggingface.co/v1",
-        api_key=hf_token,
-        model="Qwen/Qwen2.5-72B-Instruct",
-        temperature=0.2
-    )
+    base_url="https://router.huggingface.co/v1",
+    api_key=hf_token,
+    model="Qwen/Qwen2.5-72B-Instruct",
+    temperature=0.1
+)
 
-# Khởi tạo Agents
-calendar_agent = create_react_agent(llm, tools=get_calendar_tools() + [get_user_info])
-research_agent = create_react_agent(llm, tools=[web_search_tool, consult_guidelines])
+# Gắn công cụ vào mô hình
+llm_with_tools = llm.bind_tools(admissions_tools)
 
-def calendar_node(state: AgentState):
-    print("📅 [Calendar] Đang chạy...")
-    result = calendar_agent.invoke({"messages": state["messages"]})
-    return {"messages": [result["messages"][-1]]}
+# 2. Định nghĩa các Node trong Graph
 
-def research_node(state: AgentState):
-    print("🔍 [Research] Đang chạy...")
-    result = research_agent.invoke({"messages": state["messages"]})
-    return {"messages": [result["messages"][-1]]}
+def reasoner(state: AgentState):
+    """
+    Node xử lý chính: Nhận câu hỏi, áp dụng Persona và quyết định dùng Tool hay trả lời.
+    """
+    system_prompt = SystemMessage(content=(
+        "Bạn là Chuyên viên Tư vấn Tuyển sinh chính thức của Trường Đại học Công nghệ XYZ (XYZ University of Technology) năm 2026.\n"
+        "Phong cách: Chuyên nghiệp, chào đón và cực kỳ chính xác.\n\n"
+        "QUY TẮC CỐT LÕI:\n"
+        "1. Bạn PHẢI sử dụng các công cụ được cung cấp để tra cứu điểm chuẩn, học phí và chỉ tiêu. KHÔNG ĐƯỢC tự bịa con số.\n"
+        "2. Nếu công cụ không trả về dữ liệu, hãy trả lời: 'Tôi không có thông tin chính thức về vấn đề này'.\n"
+        "3. Luôn phản hồi bằng Tiếng Việt lịch sự."
+    ))
+    
+    # Kết hợp persona và lịch sử hội thoại
+    messages = [system_prompt] + state["messages"]
+    response = llm_with_tools.invoke(messages)
+    
+    return {"messages": [response]}
 
-# Lắp ráp Workflow
+# Node chạy Tool tự động
+tool_node = ToolNode(admissions_tools)
+
+# 3. Định nghĩa Logic điều hướng (Routing)
+
+def should_continue(state: AgentState) -> Literal["tools", END]:
+    """
+    Kiểm tra xem LLM có yêu cầu gọi Tool hay không.
+    """
+    messages = state["messages"]
+    last_message = messages[-1]
+    
+    # Nếu có tool_calls, đi tiếp sang node 'tools'
+    if last_message.tool_calls:
+        return "tools"
+    
+    # Nếu không, kết thúc hội thoại
+    return END
+
+# 4. Xây dựng Graph
+
 workflow = StateGraph(AgentState)
-workflow.add_node("Supervisor", lambda state: supervisor_node(state, llm))
-workflow.add_node("CalendarAgent", calendar_node)
-workflow.add_node("ResearchAgent", research_node)
 
-workflow.set_entry_point("Supervisor")
+# Thêm các nút
+workflow.add_node("reasoner", reasoner)
+workflow.add_node("tools", tool_node)
 
-# Điều kiện rẽ nhánh (Chặn lặp vô hạn nhờ nút FINISH)
+# Thiết lập điểm bắt đầu
+workflow.add_edge(START, "reasoner")
+
+# Thiết lập quan hệ rẽ nhánh từ reasoner
 workflow.add_conditional_edges(
-    "Supervisor",
-    lambda state: state["next"],
+    "reasoner",
+    should_continue,
     {
-        "CalendarAgent": "CalendarAgent",
-        "ResearchAgent": "ResearchAgent",
-        "FINISH": END
+        "tools": "tools",
+        END: END
     }
 )
 
-# Làm xong thì quay lại Supervisor báo cáo
-workflow.add_edge("CalendarAgent", "Supervisor")
-workflow.add_edge("ResearchAgent", "Supervisor")
+# Sau khi chạy tool xong, bắt buộc quay lại reasoner để tổng hợp kết quả
+workflow.add_edge("tools", "reasoner")
 
+# 5. Biên dịch Workflow
 app = workflow.compile(checkpointer=MemorySaver())
