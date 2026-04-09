@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
@@ -8,22 +8,25 @@ from langchain_chroma import Chroma
 # Load environment variables
 load_dotenv()
 
-def ingest_documents(file_path: str, persist_directory: str = "./chroma_db"):
+def ingest_directory(directory_path: str, persist_directory: str = "./chroma_db"):
     """
-    Xử lý tệp PDF tuyển sinh, chia nhỏ văn bản và lưu vào ChromaDB.
+    Xử lý tất cả tệp PDF trong thư mục tuyển sinh, chia nhỏ văn bản và lưu vào ChromaDB.
     """
-    if not os.path.exists(file_path):
-        print(f"⚠️ Lỗi: Không tìm thấy tệp {file_path}. Vui lòng kiểm tra lại đường dẫn.")
+    if not os.path.exists(directory_path):
+        print(f"⚠️ Lỗi: Không tìm thấy thư mục {directory_path}. Vui lòng tạo thư mục.")
         return
 
-    print(f"🚀 Bắt đầu nạp dữ liệu từ: {file_path}...")
+    print(f"🚀 Bắt đầu nạp toàn bộ dữ liệu PDF từ thư mục: {directory_path}...")
 
-    # 1. Load PDF using PyPDF (Nhẹ hơn và ổn định hơn trên Windows so với Unstructured)
-    loader = PyPDFLoader(file_path)
+    # 1. Load PDF from directory
+    loader = PyPDFDirectoryLoader(directory_path)
     data = loader.load()
 
+    if not data:
+        print("⚠️ Không tìm thấy file PDF nào trong thư mục để nạp.")
+        return
+
     # 2. Split text into chunks using sliding window (overlap)
-    # Chúng ta sử dụng RecursiveCharacterTextSplitter để giữ ngữ cảnh tốt hơn
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
         chunk_overlap=200,
@@ -47,16 +50,12 @@ def ingest_documents(file_path: str, persist_directory: str = "./chroma_db"):
     print("✨ Hoàn tất! Dữ liệu tuyển sinh đã sẵn sàng để tra cứu.")
 
 if __name__ == "__main__":
-    # Đường dẫn tệp PDF tuyển sinh
-    SOURCE_PDF = "data/admissions/De_an_tuyen_sinh_2026.pdf"
+    # Đường dẫn thư mục PDF tuyển sinh
+    SOURCE_DIR = "data/admissions"
     DB_DIR = "./chroma_db"
     
     # Tạo thư mục data/admissions nếu chưa có
-    os.makedirs(os.path.dirname(SOURCE_PDF), exist_ok=True)
+    os.makedirs(SOURCE_DIR, exist_ok=True)
     
-    # Nếu file chưa tồn tại, thông báo để người dùng bỏ file vào
-    if not os.path.exists(SOURCE_PDF):
-        print(f"📌 Ghi chú: Hãy đặt tệp PDF tuyển sinh của bạn vào: {SOURCE_PDF}")
-        print("Sau đó chạy lại script này.")
-    else:
-        ingest_documents(SOURCE_PDF, DB_DIR)
+    # Chạy script nạp liệu
+    ingest_directory(SOURCE_DIR, DB_DIR)

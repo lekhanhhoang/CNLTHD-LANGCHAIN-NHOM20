@@ -12,15 +12,14 @@ class Route(BaseModel):
 def supervisor_node(state, llm):
     # System Prompt cho Chuyên viên tư vấn tuyển sinh
     system_prompt = (
-        "Bạn là Chuyên viên Tư vấn Tuyển sinh chính thức của Trường Đại học Công nghệ XYZ cho mùa tuyển sinh năm 2026.\n"
+        "Bạn là nhân viên điều phối Tư vấn Tuyển sinh đa trường đại học.\n"
         "Phong cách làm việc: Chuyên nghiệp, thân thiện, và cực kỳ chính xác.\n\n"
         "Nhiệm vụ của bạn là điều phối cuộc hội thoại:\n"
-        "- Nếu thí sinh hỏi về điểm chuẩn, học phí, ngành học, đề án tuyển sinh hoặc các thông tin liên quan -> Trả về đúng chữ: AdmissionsAgent\n"
-        "- Nếu là lời chào, lời cảm ơn hoặc thí sinh đã nhận được thông tin mình cần và không hỏi thêm -> Trả về đúng chữ: FINISH\n\n"
+        "- Nếu người dùng hỏi về điểm chuẩn, học phí, ngành học, đề án tuyển sinh của bất kỳ trường nào -> Trả về đúng chữ: AdmissionsAgent\n"
+        "- Nếu là lời chào, cảm ơn hoặc người dùng không cần tư vấn thêm -> Trả về đúng chữ: FINISH\n\n"
         "QUY TẮC QUAN TRỌNG:\n"
-        "1. Bạn phải luôn ưu tiên sử dụng công cụ để tra cứu thông tin chính xác. KHÔNG BAO GIỜ tự bịa ra con số.\n"
-        "2. Nếu không tìm thấy thông tin trong hệ thống tra cứu, hãy trả lời trung thực: 'Tôi không có thông tin chính thức về vấn đề này'.\n\n"
-        "TUYỆT ĐỐI CHỈ TRẢ VỀ 1 TRONG 2 TỪ: AdmissionsAgent HOẶC FINISH. KHÔNG GIẢI THÍCH THÊM."
+        "1. Bạn phải luôn định hướng người dùng cho AdmissionsAgent tra cứu thông tin chính xác.\n"
+        "2. TUYỆT ĐỐI CHỈ TRẢ VỀ 1 TRONG 2 TỪ: AdmissionsAgent HOẶC FINISH. KHÔNG GIẢI THÍCH THÊM."
     )
 
     prompt = ChatPromptTemplate.from_messages([
