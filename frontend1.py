@@ -4,8 +4,8 @@ from langchain_core.messages import HumanMessage, AIMessage
 from src.graph.workflow import app
 
 # Cấu hình trang
-st.set_page_config(page_title="Tư vấn Tuyển sinh XYZ", page_icon="🎓")
-st.title("🎓 Hệ thống Tư vấn Tuyển sinh Đại học Công nghệ XYZ")
+st.set_page_config(page_title="Hệ thống Tư vấn Tuyển sinh", page_icon="🎓")
+st.title("🎓 Hệ thống Tư vấn Tuyển sinh Giáo dục Đại học")
 st.markdown("---")
 
 # Khởi tạo session state
