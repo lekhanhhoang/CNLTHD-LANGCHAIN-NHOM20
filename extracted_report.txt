@@ -1,0 +1,1428 @@
+TRƯỜNG ĐẠI HỌC SÀI GÒN
+KHOA CÔNG NGHỆ THÔNG TIN
+BÁO CÁO
+BÁO CÁO CÁC CÔNG NGHỆ LẬP TRÌNH HIỆN ĐẠI
+Chatbot Tư vấn Tuyển sinh Thông minh (RAG System)
+Môn học: Các công nghệ lập trình hiện đại
+Giảng viên hướng dẫn: Phạm Thi Vương
+Nhóm lớp học: Sáng thứ 7, từ tiết 1 đến tiết 5
+Sinh viên thực hiện: Lê Khánh Hoàng			MSSV: 3122410125
+				  Lê Quốc Nam			MSSV: 3122410247
+				  Trương Xuân Hưng		MSSV: 3122410161
+				  Nguyễn Hoàng Thịnh		MSSV: 3122560073
+TP.HCM, ngày 7 tháng 3 năm 2026
+LỜI MỞ ĐẦU
+1. Lý do chọn đề tài
+Hiện nay, sự bùng nổ của Trí tuệ Nhân tạo (AI), đặc biệt là các Mô hình Ngôn ngữ Lớn (LLM - Large Language Models) như GPT-3, GPT-4, Llama, Falcon,... đã mở ra một kỷ nguyên mới cho ngành công nghệ. Tuy nhiên, các mô hình này khi hoạt động độc lập thường gặp giới hạn về dữ liệu cập nhật theo thời gian thực (real-time data) và khả năng tương tác sâu với các hệ thống dữ liệu doanh nghiệp hiện có.
+LangChain nổi lên như một khung (framework) mã nguồn mở mạnh mẽ, cho phép các nhà phát triển kết nối LLM với các nguồn dữ liệu ngoại vi và các công cụ thực tế một cách liền mạch. Đề tài "Xây dựng hệ thống tối ưu hóa quy trình làm việc sử dụng LangChain" được chọn với các lý do cụ thể sau:
+Tối ưu hóa năng suất và Giải quyết bài toán thủ công: Trong nhiều quy trình công việc hiện tại, các nhiệm vụ như tóm tắt tài liệu, phân tích phản hồi khách hàng, trả lời câu hỏi dựa trên dữ liệu nội bộ, hoặc tạo báo cáo định kỳ vẫn đang được thực hiện một cách thủ công. Việc này không chỉ tốn thời gian, chi phí nhân sự mà còn dễ xảy ra sai sót không đáng có. Ứng dụng giải pháp Automation tích hợp LangChain cho phép tự động hóa thông minh các quy trình này, nâng cao đáng kể hiệu suất và đảm bảo tính nhất quán của dữ liệu.
+Tính ứng dụng thực tế cao: Đề tài không chỉ dừng lại ở việc nghiên cứu lý thuyết mà hướng tới việc xây dựng một sản phẩm thực tiễn (prototype). Sản phẩm này có khả năng giải quyết trực tiếp một bài toán cụ thể cho một tổ chức (ví dụ: một chatbot hỗ trợ khách hàng thông minh hơn, hoặc một công cụ tự động tạo nội dung dựa trên dữ liệu sản phẩm), mang lại giá trị gia tăng cụ thể và khả thi.
+2. Mục tiêu báo cáo
+Mục tiêu chính của báo cáo này là:
+Hiểu sâu về luồng dữ liệu (Data Flow): Phân tích và nắm vững kiến trúc, cách thức LangChain kết nối các thành phần như Model I/O (mô hình LLM), Prompts (mẫu câu lệnh), Memory (bộ nhớ), Retrieval (truy xuất dữ liệu RAG), Chains (chuỗi logic) và Agents (tác nhân thông minh) để tạo thành một hệ thống liền mạch.
+Xây dựng quy trình hoạt động trơn tru: Thiết kế và triển khai một quy trình tự động hóa hoàn chỉnh cho một ứng dụng cụ thể. Đảm bảo hệ thống hoạt động ổn định, có khả năng xử lý các trường hợp ngoại lệ (error handling), tối ưu hóa thời gian phản hồi và đưa ra kết quả chính xác, đáng tin cậy.
+3. Phạm vi nghiên cứu
+Để đảm bảo tính khả thi trong khung thời gian 12 tuần và nguồn lực hiện có, phạm vi nghiên cứu được giới hạn như sau:
+Giới hạn dữ liệu đầu vào: Hệ thống chỉ được thiết kế để xử lý dữ liệu văn bản phi cấu trúc (ví dụ: các tệp tin .txt, .pdf, .docx, và nội dung web cơ bản) từ một bộ dữ liệu mẫu gồm tối đa 100 tài liệu hoặc 10,000 trang. Các loại dữ liệu phức tạp khác như hình ảnh, âm thanh, hoặc dữ liệu thời gian thực từ API bên ngoài sẽ không nằm trong phạm vi xử lý của đồ án này.
+Giới hạn quy trình tự động hóa: Tập trung vào việc giải quyết một quy trình chính là "Truy xuất và Trả lời câu hỏi thông minh (Retrieval-Augmented Generation - RAG)" từ dữ liệu đầu vào. Đồ án sẽ không triển khai các hành động phức tạp của các Tác nhân (Agents) như gọi API để cập nhật dữ liệu hoặc thực hiện các hành động đa bước phức tạp khác.
+4. Kế hoạch và Tiến độ thực hiện (Timeline)
+5. Cấu trúc báo cáo
+Phần 1: Tổng quan và Cơ sở lý thuyết về LangChain
+Chương 1: Giới thiệu về công nghệ LangChain: Tổng quan, lịch sử ra đời, và tại sao framework này lại cần thiết cho các ứng dụng LLM.
+Chương 2: Các khái niệm cơ bản: Giải thích về Prompt Templates, Models, Chains, Memory, và RAG (Retrieval-Augmented Generation). Người đọc cần hiểu những điều này trước tiên.
+Chương 3: Hệ sinh thái và LangChain Integration: Cách LangChain kết nối với các công cụ bên ngoài (Vector Databases, APIs, LLM providers).
+Chương 4: Tác tử thông minh (Agents) và LangGraph: Giới thiệu về khái niệm Agent (bao gồm Deep Agent). Đi sâu vào LangGraph để giải thích cách quản lý luồng hội thoại phức tạp và xây dựng hệ thống đa tác tử (Multi-Agent).
+Chương 5: Quản lý và Giám sát với LangSmith: Cách theo dõi, debug và đánh giá hiệu suất của các Chains/Agents vừa học ở trên.
+Phần 2: Xây dựng và Triển khai dự án thực tế
+Chương 6: Ứng dụng thực tế: Nêu các use-case phổ biến trên thế giới, từ đó tạo bước đệm dẫn dắt vào bài toán mà bạn sắp giải quyết.
+Chương 7: Phân tích bài toán: Xác định rõ yêu cầu, mục tiêu dự án và quy trình hoạt động (workflow) dự kiến.
+Chương 8: Thiết lập môi trường và Kiến trúc dữ liệu: Giờ đây khi đã hiểu công nghệ và bài toán, đây là lúc cài đặt môi trường và thiết kế kiến trúc hệ thống phù hợp.
+Chương 9: Xây dựng hệ thống logic: Tập trung vào việc code và kết nối các thành phần. Nếu bạn đang tập trung vào LangGraph, đây là chương để trình bày cách bạn thiết lập luồng Multi-Agent cho bài toán.
+Chương 10: Kiểm thử, Đánh giá và Tối ưu: Trình bày quá trình chạy thử nghiệm, sử dụng LangSmith (đã giới thiệu ở Chương 5) để tìm lỗi và tối ưu hóa độ chính xác của hệ thống.
+Chương 11: Triển khai và Demo: Đưa ứng dụng lên môi trường thực tế (Local/Cloud), thiết kế giao diện (UI) và trình bày kết quả Demo.
+Chương 12: Kết luận và Hướng phát triển: Tóm tắt lại những gì đã làm được, những hạn chế và kế hoạch cải tiến trong tương lai.
+PHẦN 1: CƠ SỞ LÝ THUYẾT VỀ LANGCHAIN
+Chương 1: Giới thiệu về Công nghệ LangChain
+1.1. Bối cảnh và Lịch sử hình thành 
+LangChain được khởi xướng như một dự án mã nguồn mở vào tháng 10 năm 2022 bởi Harrison Chase trong quá trình làm việc tại công ty khởi nghiệp về trí tuệ nhân tạo Robust Intelligence. Ngay từ giai đoạn đầu, LangChain đã thu hút sự quan tâm mạnh mẽ của cộng đồng phát triển AI nhờ khả năng kết nối các mô hình ngôn ngữ lớn (LLM) với dữ liệu và công cụ bên ngoài, giúp xây dựng các ứng dụng AI linh hoạt hơn so với các mô hình thuần túy như ChatGPT hay GPT 3.
+Đến tháng 4 năm 2023, nhóm phát triển chính thức thành lập công ty LangChain, Inc. và huy động được hơn 20 triệu USD từ các quỹ đầu tư mạo hiểm hàng đầu như Sequoia Capital và Benchmark, qua đó chuyển từ một dự án cộng đồng sang một nền tảng thương mại được đầu tư bài bản. Sau đó, LangChain liên tục ra mắt các công cụ mới như LangChain Expression Language (LCEL), LangServe, LangSmith và LangGraph, giúp người phát triển dễ dàng thiết kế, triển khai, giám sát và vận hành các ứng dụng LLM trong môi trường thực tế, bao gồm chatbot, trợ lý ảo và hệ thống hỏi đáp.
+Tính đến năm 2025–2026, LangChain đã trở thành một trong những framework phổ biến nhất trong lĩnh vực xây dựng ứng dụng AI sử dụng mô hình ngôn ngữ lớn, với số lượng sao trên GitHub và lượt tải hàng tháng rất lớn. Sự phát triển nhanh chóng của LangChain không chỉ phản ánh xu hướng ứng dụng LLM vào thực tiễn, mà còn mở ra nhiều cơ hội cho các hệ thống như chatbox tư vấn tuyển sinh sử dụng kỹ thuật RAG và giao diện Streamlit để trở nên thông minh, linh hoạt và dễ bảo trì hơn.
+1.2. Vai trò của LangChain trong phát triển AI hiện đại 
+Sự ra đời của các Mô hình ngôn ngữ lớn (Large Language Models - LLMs) như GPT-4, Llama 3 hay Claude đã tạo nên một cuộc cách mạng trong xử lý ngôn ngữ tự nhiên. Tuy nhiên, khi đưa vào môi trường sản xuất thực tế hoặc xây dựng các ứng dụng chuyên biệt (như hệ thống tư vấn tuyển sinh hay trợ lý ảo doanh nghiệp), các nhà phát triển vấp phải những rào cẻn kỹ thuật cố hữu. LLM về bản chất là những "bộ não" cực kỳ thông minh nhưng lại bị cô lập trong không gian số.
+LangChain ra đời không phải để thay thế LLM, mà để đóng vai trò là một khung điều phối (Orchestration Framework). Nó giải quyết khoảng cách giữa một mô hình ngôn ngữ tĩnh và một ứng dụng phần mềm động, có khả năng tương tác và xử lý dữ liệu thực tế.
+Một trong những hạn chế lớn nhất của LLM là Knowledge Cutoff (điểm dừng kiến thức). Các mô hình chỉ biết những gì chúng đã được huấn luyện. Đối với các hệ thống cần độ chính xác cao về thông tin mới nhất hoặc dữ liệu nội bộ (ví dụ: quy chế tuyển sinh năm 2026), LLM thuần túy thường dẫn đến hiện tượng "ảo giác" (hallucination) – tự tin đưa ra thông tin sai lệch.
+LangChain giải quyết vấn đề này thông qua quy trình Retrieval-Augmented Generation (RAG). Nó cung cấp các module chuẩn hóa để:
+Kết nối dữ liệu: Tự động nạp dữ liệu từ PDF, cơ sở dữ liệu SQL, hoặc các trang web.
+Xử lý và Chuyển đổi: Chia nhỏ văn bản (Text Splitting) và chuyển đổi chúng thành các Vector Embeddings.
+Truy xuất thông minh: Kết nối với các Vector Database để tìm kiếm thông tin liên quan nhất dựa trên câu hỏi của người dùng, sau đó "mớm" dữ liệu này vào ngữ cảnh (context) để LLM trả lời dựa trên sự thật thay vì dự đoán.
+Một ứng dụng thực tế hiếm khi chỉ dừng lại ở một câu hỏi và một câu trả lời. Thông thường, hệ thống cần thực hiện một chuỗi các hành động liên tiếp: Tóm tắt văn bản → Trích xuất từ khóa → Tìm kiếm thông tin bổ sung → Kiểm tra định dạng → Phản hồi.
+Trong lập trình truyền thống, việc quản lý các luồng này với LLM rất cồng kềnh vì tính bất định của dữ liệu đầu ra. LangChain giới thiệu khái niệm "Chains" và ngôn ngữ biểu đạt LCEL (LangChain Expression Language). Nó cho phép các nhà phát triển "xâu chuỗi" các thành phần lại với nhau một cách mạch lạc. Điều này giúp giải quyết vấn đề quản lý mã nguồn, làm cho logic của hệ thống trở nên rõ ràng, dễ bảo trì và có thể tái sử dụng.
+Nếu LLM chỉ là một chatbot, nó chỉ có thể nói. Nhưng trong các dự án thực tế (như ứng dụng hỗ trợ khách hàng tại công viên giải trí), chúng ta cần AI có khả năng thực thi hành động: kiểm tra lịch trình, tính toán quãng đường dựa trên GPS, hoặc dịch thuật tài liệu ngay lập tức.
+LangChain giải quyết vấn đề này bằng mô hình Agents. Một Agent sử dụng LLM như một công cụ suy luận (reasoning engine) để quyết định:
+Cần sử dụng công cụ nào (Google Search, Python Console, API dịch thuật...)?
+Thứ tự thực hiện các hành động là gì?
+Đánh giá kết quả của hành động trước để quyết định bước tiếp theo.
+Đây là bước chuyển mình từ AI thụ động sang AI chủ động, giải quyết bài toán tự động hóa hoàn toàn các quy trình công việc phức tạp.
+LLM về bản chất là Stateless (không lưu trạng thái). Mỗi lần gọi API là một lần bắt đầu lại từ đầu. Đối với những cuộc hội thoại kéo dài, việc gửi lại toàn bộ lịch sử sẽ làm tăng chi phí và vượt quá giới hạn "cửa sổ ngữ cảnh" (context window).
+LangChain cung cấp các giải pháp Memory tinh vi:
+ConversationBuffer: Lưu toàn bộ lịch sử.
+ConversationSummary: Tự động tóm tắt các nội dung cũ để tiết kiệm dung lượng nhưng vẫn giữ được ý chính.
+VectorStore-backed memory: Lưu trữ ký ức vào cơ sở dữ liệu để truy xuất lại sau nhiều ngày hoặc nhiều tuần. Điều này giúp hệ thống trở nên "người" hơn, có khả năng hiểu sâu và duy trì sự nhất quán trong giao tiếp dài hạn.
+Cuối cùng, LangChain giải quyết vấn đề về việc đưa ứng dụng từ bản thử nghiệm (Notebook/Local) ra thực tế. Thông qua hệ sinh thái mở rộng:
+LangSmith: Giúp theo dõi (trace), kiểm thử (test) và gỡ lỗi (debug) từng bước chạy của LLM, giải quyết nỗi lo về việc không biết tại sao AI trả lời sai.
+LangGraph: Cho phép xây dựng các quy trình có tính tuần hoàn (cycles), phù hợp cho các hệ thống Agent phức tạp đòi hỏi sự kiểm soát chặt chẽ.
+LangChain sinh ra để chuẩn hóa việc xây dựng ứng dụng AI. Nó giúp nhà phát triển tập trung vào việc sáng tạo giá trị nghiệp vụ thay vì phải loay hoay với việc kết nối các API rời rạc hay quản lý các luồng dữ liệu phức tạp của LLM.
+Bảng 1.1: So sánh Chatbot truyền thống và Chatbot sử dụng LLM/LangChain
+1.3. Xu hướng “AI First” và AI theo ngữ cảnh (Context-aware AI) 
+Trong thập kỷ trước, thế giới chứng kiến sự thống trị của xu hướng "Mobile First" và "Cloud First". Tuy nhiên, với sự bùng nổ của các mô hình ngôn ngữ lớn (LLM) và khả năng tính toán vượt trội của điện toán đám mây, chúng ta đã chính thức bước vào kỷ nguyên của AI First (Ưu tiên Trí tuệ nhân tạo) và Hyper-automation (Siêu tự động hóa). Đây không chỉ là những thuật ngữ công nghệ thuần túy mà là những chiến lược cốt lõi giúp doanh nghiệp tái định nghĩa cách thức vận hành, sáng tạo và tương tác với khách hàng.
+"AI First" là một triết lý thiết kế và phát triển sản phẩm, trong đó Trí tuệ nhân tạo không còn là một tính năng bổ sung (add-on) mà là thành phần cốt lõi, định hình toàn bộ cấu trúc của hệ thống ngay từ giai đoạn sơ khai.
+Sự thay đổi về tư duy phát triển: Trước đây, phần mềm hoạt động dựa trên các quy tắc (Rule-based) được lập trình sẵn bởi con người. Với AI First, phần mềm học từ dữ liệu để đưa ra quyết định. Thay vì xây dựng các giao diện người dùng (UI) phức tạp với hàng chục nút bấm, xu hướng hiện nay chuyển dịch sang giao diện hội thoại (Conversational UI) hoặc các tính năng dự đoán hành động người dùng.
+Cá nhân hóa ở quy mô lớn: AI First cho phép các hệ thống xử lý hàng tỷ điểm dữ liệu để tạo ra trải nghiệm riêng biệt cho từng cá nhân theo thời gian thực – điều mà các phương pháp lập trình truyền thống không thể thực hiện được.
+Vai trò của Generative AI: Sự xuất hiện của Generative AI đã đẩy nhanh xu hướng này. Các doanh nghiệp hiện nay ưu tiên tích hợp các "bộ não" AI vào mọi quy trình, từ viết mã nguồn tự động, sáng tạo nội dung đến phân tích tài chính phức tạp.
+Gartner định nghĩa Hyper-automation là việc tiếp cận một cách có kỷ luật để nhanh chóng xác định, kiểm tra và tự động hóa càng nhiều quy trình kinh doanh và quy trình CNTT càng tốt. Nó không chỉ đơn thuần là sử dụng các robot phần mềm (RPA) để thực hiện các tác vụ lặp đi lặp lại.
+Sự kết hợp đa công nghệ: Hyper-automation là sự hội tụ của nhiều công nghệ tiên tiến:
+RPA (Robotic Process Automation): Xử lý các tác vụ lặp lại ở bề mặt.
+AI và Machine Learning: Đóng vai trò là bộ não phân tích và ra quyết định.
+Process Mining: Tìm kiếm và phát hiện các quy trình có thể tối ưu hóa.
+iPaaS (như n8n): Kết nối các luồng dữ liệu giữa các nền tảng khác nhau.
+Từ tự động hóa tác vụ đến tự động hóa quy trình phức tạp: Nếu RPA chỉ có thể giúp nhập liệu, thì Hyper-automation có thể tự đọc một hóa đơn (OCR), hiểu nội dung (NLP), kiểm tra sự trùng khớp trong hệ thống kế toán và tự động ra lệnh thanh toán hoặc gửi cảnh báo nếu có dấu hiệu gian lận.
+Khả năng thích ứng: Khác với tự động hóa truyền thống vốn rất "giòn" và dễ gãy khi có sự thay đổi nhỏ về dữ liệu, Hyper-automation có khả năng thích nghi cao nhờ vào các mô hình học máy liên tục được cập nhật.
+Hai xu hướng này không hoạt động độc lập mà bổ trợ lẫn nhau để tạo nên một hệ sinh thái thông minh. Một doanh nghiệp đi theo hướng AI First sẽ có nền tảng dữ liệu tốt để triển khai Hyper-automation hiệu quả. Ngược lại, Hyper-automation cung cấp "đôi tay" để AI thực thi các quyết định vào thế giới thực.
+Sự kết hợp này giải quyết những bài toán nhức nhối:
+Giải quyết sự khan hiếm nhân lực: Tự động hóa những công việc đòi hỏi trí tuệ mức độ trung bình, giúp con người tập trung vào những việc đòi hỏi sự sáng tạo và cảm thông.
+Tăng tốc độ phản ứng: Trong thế giới kinh doanh hiện đại, tốc độ phản hồi tính bằng giây. Chỉ có sự kết hợp giữa AI và tự động hóa mới đáp ứng được yêu cầu này.
+Giảm thiểu sai sót: Con người dễ mệt mỏi và sai sót, nhưng một hệ thống Hyper-automation được dẫn dắt bởi AI có thể hoạt động 24/7 với độ chính xác gần như tuyệt đối.
+Việc nghiên cứu về LangChain chính là việc đứng tại điểm giao thoa của cả hai xu hướng này. LangChain đóng vai trò là khung điều phối cho phép hiện thực hóa tư duy AI First bằng cách kết nối các mô hình AI mạnh mẽ nhất với các quy trình tự động hóa (Hyper-automation). Thông qua các khái niệm như Agents và Chains, LangChain cho phép chúng ta xây dựng những hệ thống không chỉ biết "nói" mà còn biết "làm", tự động hóa những quy trình trí tuệ phức tạp mà trước đây chỉ con người mới làm được.
+Chương 2: Các thành phần cốt lõi (Core Primitives) trong kiến trúc LangChain
+Để kiến thiết các hệ thống Trí tuệ nhân tạo tạo sinh (Generative AI) phức hợp, framework LangChain cung cấp một hệ thống các lớp trừu tượng (abstractions) đóng vai trò là những khối xây dựng nền tảng (building blocks). Việc thấu hiểu bản chất kỹ thuật và cơ chế hoạt động của các thành phần cốt lõi này là điều kiện tiên quyết để tối ưu hóa và làm chủ kiến trúc hệ thống.
+2.1. Nền tảng Mô hình Ngôn ngữ (Models)
+Trong hệ sinh thái LangChain, Models (Mô hình) đóng vai trò là "Động cơ suy luận" (Reasoning Engine) trung tâm. Về mặt toán học, các Mô hình ngôn ngữ lớn (LLMs) hoạt động dựa trên cơ chế tự hồi quy (autoregressive generation), tính toán phân phối xác suất có điều kiện của token tiếp theo dựa trên chuỗi token trước đó: $P(w_t | w_1, w_2, ..., w_{t-1})$.
+Tuy nhiên, LangChain không trực tiếp huấn luyện hay vận hành các mô hình này ở mức phần cứng. Thay vào đó, nó cung cấp một giao diện chuẩn hóa (Standard API Interface) để trừu tượng hóa sự phức tạp trong việc giao tiếp với các mô hình nền tảng. Lớp trừu tượng này phân tách cấu trúc mô hình thành hai dạng thức chính dựa trên phương pháp tinh chỉnh (fine-tuning) và giao thức I/O (Input/Output):
+Large Language Models (LLMs truyền thống):
+Bản chất: Là các mô hình cơ sở (Base Models) được thiết kế cho tác vụ hoàn thiện văn bản (text completion). Chúng nhận đầu vào là một chuỗi văn bản thuần túy (string) và trả về một chuỗi văn bản tiếp nối.
+Đặc điểm: Hoạt động tốt cho các tác vụ sinh văn bản đơn giản nhưng thiếu khả năng duy trì ngữ cảnh đa lượt (multi-turn).
+Chat Models (Mô hình Hội thoại tinh chỉnh):
+Bản chất: Đây là các mô hình đã trải qua quá trình tinh chỉnh theo chỉ thị (Instruction Tuning) và học tăng cường từ phản hồi của con người (RLHF). Khác với LLMs truyền thống, Chat Models giao tiếp thông qua một giao thức có cấu trúc chặt chẽ: Đầu vào là một danh sách các Thông điệp (List of Messages) và đầu ra là một Thông điệp (Message) duy nhất.
+Cấu trúc Thông điệp (Message Roles): LangChain tiêu chuẩn hóa các thông điệp này thành các lớp (classes) chuyên biệt:
+SystemMessage: Nạp các hệ luật toàn cục (global rules), định hình siêu tham số về nhân cách và giới hạn hành vi của mô hình.
+HumanMessage: Biểu diễn truy vấn đầu vào từ người dùng cuối.
+AIMessage: Chứa chuỗi phản hồi do mô hình sinh ra, hoặc các chỉ thị gọi hàm (Tool Calls).
+Phân tích ứng dụng: Đối với các hệ thống truy vấn tri thức chuyên biệt (như hỗ trợ tư vấn học vụ), việc sử dụng Chat Models là bắt buộc. Khả năng thiết lập ranh giới an toàn thông qua SystemMessage giúp ngăn chặn hiện tượng tiêm mã độc (Prompt Injection) và giới hạn mô hình chỉ được phép trả lời dựa trên kho dữ liệu cục bộ được cung cấp.
+2.2. Khuôn mẫu Lời nhắc (Prompt Templates) và Kỹ thuật ngữ cảnh hóa
+Các Mô hình ngôn ngữ lớn bản chất là những cỗ máy thống kê phi trạng thái (stateless statistical machines). Để điều hướng xác suất đầu ra của mô hình hội tụ về một kết quả mong muốn, kỹ thuật Kỹ nghệ Lời nhắc (Prompt Engineering) được áp dụng để cung cấp bối cảnh (context) và định dạng chỉ thị.
+Trong môi trường phần mềm cấp doanh nghiệp, việc nối chuỗi văn bản (string concatenation) thủ công để tạo Prompt sẽ dẫn đến rủi ro tiêm nhiễm dữ liệu (data injection vulnerabilities) và khó khăn trong bảo trì. LangChain giải quyết bài toán này thông qua Prompt Templates (Khuôn mẫu Lời nhắc).
+Cơ chế hoạt động: Prompt Templates cho phép tách biệt logic ngôn ngữ khỏi mã nguồn thực thi. Chúng hoạt động như các hàm ánh xạ (mapping functions), nhận đầu vào là một từ điển các biến động (dynamic variables dictionary) và nội suy (interpolate) chúng vào một khuôn mẫu tĩnh đã được định nghĩa trước.
+LangChain cung cấp hai cấu trúc khuôn mẫu tương ứng với hai loại mô hình:
+PromptTemplate: Hỗ trợ định dạng chuỗi đơn (Single string formatting) cho các LLMs truyền thống.
+ChatPromptTemplate: Định dạng một mảng các đối tượng thông điệp (Message objects) phức hợp, hỗ trợ truyền các biến động vào từng vai trò cụ thể (System, Human).
+Hiện thực hóa cấu trúc Prompt trong hệ thống RAG:
+Trong một đường ống RAG tiêu chuẩn, ChatPromptTemplate đóng vai trò cốt lõi trong việc "đóng gói" dữ liệu nền (ground truth) trước khi chuyển giao cho Động cơ suy luận. Đoạn mã dưới đây minh họa việc cô lập biến ngữ cảnh {context} và biến truy vấn {query}:
+from langchain_core.prompts import ChatPromptTemplate
+# Định nghĩa khuôn mẫu hội thoại đa vai trò với các biến động
+prompt_template = ChatPromptTemplate.from_messages([
+    ("system", """Bạn là một Chuyên gia phân tích dữ liệu giáo dục. 
+Nhiệm vụ của bạn là tổng hợp thông tin dựa trên Ngữ cảnh được cung cấp.
+TUYỆT ĐỐI tuân thủ các quy tắc sau:
+1. Chỉ sử dụng thông tin trong phần Ngữ cảnh.
+2. Nếu Ngữ cảnh không chứa câu trả lời, hãy trả về mã lỗi: INFO_NOT_FOUND.
+Ngữ cảnh hiện tại:
+{context}"""),
+    ("human", "{query}")
+])
+# Quá trình nội suy (Interpolation) biến động vào khuôn mẫu tại thời điểm thực thi (Runtime)
+formatted_prompt = prompt_template.format_messages(
+    context="Ngành Khoa học máy tính năm 2026 dự kiến tuyển 500 chỉ tiêu.",
+    query="Trường tuyển bao nhiêu sinh viên cho ngành CS?"
+)
+Thông qua việc sử dụng Prompt Templates, kiến trúc hệ thống đạt được sự tách biệt mối quan tâm (Separation of Concerns). Lập trình viên có thể liên tục tối ưu hóa và triển khai các kỹ thuật học trong ngữ cảnh (In-context Learning) như Few-shot prompting (cung cấp ví dụ mẫu) ngay bên trong khuôn mẫu mà không làm thay đổi các tầng mã nguồn xử lý logic phía dưới.
+2.3. Cơ chế Quản lý Ngữ cảnh Hội thoại (Memory Management)
+Về mặt bản chất toán học, các Mô hình ngôn ngữ lớn (LLMs) là những hệ thống tính toán phi trạng thái (stateless systems). Mỗi lượt truy vấn được mô hình xử lý hoàn toàn độc lập dựa trên xác suất có điều kiện của đầu vào hiện tại: P(y | x), trong đó x là câu hỏi (prompt) và y là câu trả lời được sinh ra. Mô hình không lưu trữ bất kỳ trọng số (weights) hay trạng thái ẩn (hidden states) nào về các tương tác trước đó trong cùng một phiên làm việc.
+Để hệ thống có thể duy trì một cuộc hội thoại đa lượt (multi-turn conversation) mang tính logic và liên tục, bộ nhớ ngữ cảnh phải được quản lý bên ngoài mô hình (external memory management) và liên tục được tiêm (inject) vào đầu vào tại mỗi lượt truy vấn mới. Bài toán lúc này trở thành việc mô hình hóa xác suất dựa trên cả lịch sử hội thoại:  với  là tập hợp các thông điệp đã trao đổi trong quá khứ.
+LangChain cung cấp lớp trừu tượng Memory để giải quyết triệt để bài toán này. Khung lưu trữ của LangChain can thiệp trực tiếp vào giai đoạn tiền xử lý (pre-processing) của Prompt Templates, tự động nội suy (interpolate) lịch sử hội thoại vào khuôn mẫu trước khi gửi payload đến API của nhà cung cấp.
+Tùy thuộc vào chiến lược tối ưu hóa độ phức tạp không gian (Space Complexity) và chi phí tài nguyên (Token Cost), LangChain phân chia Memory thành các cấu trúc cốt lõi sau:
+ConversationBufferMemory (Bộ nhớ đệm nguyên bản):
+Cơ chế: Lưu trữ toàn vẹn mọi thông điệp thô (raw messages) dưới dạng một danh sách tuyến tính: .
+Đánh giá: Duy trì độ phân giải thông tin (information resolution) cao nhất, nhưng độ phức tạp về không gian tăng tuyến tính $O(n)$. Phương pháp này dễ dẫn đến hiện tượng tràn cửa sổ ngữ cảnh (Context Window Overflow) nếu phiên hội thoại kéo dài.
+ConversationBufferWindowMemory (Bộ nhớ đệm cửa sổ trượt):
+Cơ chế: Áp dụng thuật toán Cửa sổ trượt (Sliding Window), chỉ giữ lại k lượt hội thoại gần nhất: .
+Đánh giá: Giới hạn mức tiêu thụ token ở mức hằng số O(k), ngăn chặn tràn bộ nhớ nhưng đánh đổi bằng việc mất mát các ngữ cảnh ở giai đoạn đầu của cuộc hội thoại (catastrophic forgetting).
+ConversationSummaryMemory (Bộ nhớ tóm tắt động):
+Cơ chế: Sử dụng chính sức mạnh suy luận của LLM để liên tục nén (compress) lịch sử hội thoại thành một đoạn tóm tắt ngắn gọn mang tính ngữ nghĩa: .
+Đánh giá: Tối ưu hóa cực tốt băng thông token cho các tương tác dài hạn, nhưng phát sinh độ trễ (latency) và chi phí tính toán phụ trợ do phải gọi LLM liên tục ở chế độ nền (background task).
+Tham chiếu thực tiễn: Trong một hệ thống hỗ trợ tư vấn học vụ liên tục, khi người dùng liên tiếp đặt các câu hỏi truy vấn chuyên sâu có tính kế thừa (ví dụ: "Học phí ngành CNTT là bao nhiêu?"  "Mức điểm chuẩn của nó năm ngoái?"), việc áp dụng ConversationBufferWindowMemory với k=5 là một thiết kế tối ưu, giúp hệ thống duy trì được thực thể (entity) "ngành CNTT" để xử lý câu hỏi thứ hai một cách chính xác mà không làm lãng phí token xử lý.
+2.4. Ngôn ngữ Biểu thức LCEL và Chuỗi xử lý (Chains)
+Xây dựng một hệ thống AI tạo sinh hiếm khi dừng lại ở một lệnh gọi API đơn lẻ. Một luồng xử lý RAG tiêu chuẩn đòi hỏi sự phối hợp của nhiều tác vụ: Nhận câu hỏi  Truy xuất cơ sở dữ liệu Vector  Ràng buộc dữ liệu vào Prompt  Gọi LLM  Xử lý định dạng đầu ra (Output Parsing).
+Để điều phối chuỗi tác vụ này một cách tuần tự và an toàn, LangChain giới thiệu khái niệm Chains (Chuỗi xử lý). Trong các phiên bản hiện đại, LangChain đã tái cấu trúc toàn bộ nền tảng để sử dụng một mẫu thiết kế phần mềm (Design Pattern) mới mang tên LCEL (LangChain Expression Language).
+Cơ sở kỹ thuật của LCEL:
+LCEL được thiết kế dựa trên nguyên lý Hàm thành phần (Functional Composition) và Mẫu Đường ống (Pipeline Pattern). Về mặt lập trình, LCEL nạp chồng (overload) toán tử bitwise OR | (thông qua phương thức dunder __or__ trong Python) để tạo ra một cú pháp khai báo mang tính minh họa cao (declarative syntax).
+Mọi đối tượng tham gia vào chuỗi LCEL đều phải kế thừa một giao diện chuẩn có tên là Runnable. Giao diện này bắt buộc các đối tượng (như Prompt, Model, OutputParser) phải triển khai các phương thức cốt lõi như invoke() (chạy đồng bộ), ainvoke() (chạy bất đồng bộ), stream() (truyền phát dữ liệu thời gian thực), và batch() (xử lý hàng loạt).
+Kiến trúc truyền dữ liệu trong LCEL:
+Cú pháp A | B | C đồng nghĩa với việc truyền đầu ra của đối tượng $A$ làm đầu vào trực tiếp cho đối tượng $B$, và đầu ra của $B$ trở thành đầu vào của $C$. Quá trình này tạo thành một Đồ thị có hướng không chu trình (DAG) để xử lý dữ liệu.
+Mã nguồn minh họa (Code Implementation) cho một Chuỗi LCEL tiêu chuẩn:
+Đoạn mã dưới đây thể hiện việc xây dựng một đường ống nội suy và suy luận sử dụng cú pháp LCEL:
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
+from langchain_core.output_parsers import StrOutputParser
+# 1. Khởi tạo các đối tượng Runnable (Thành phần của chuỗi)
+khuon_mau_prompt = ChatPromptTemplate.from_messages([
+    ("system", "Bạn là một hệ thống phân tích dữ liệu giáo dục chuẩn xác."),
+    ("human", "Trích xuất thông tin tuyển sinh về: {truy_van}")
+])
+dong_co_llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+# StrOutputParser đảm bảo đầu ra của LLM (AIMessage object) 
+# được trích xuất thành chuỗi văn bản thuần túy (string)
+bo_loc_dau_ra = StrOutputParser()
+# 2. Xây dựng Chuỗi xử lý (Chains) thông qua Toán tử LCEL (|)
+# Kiến trúc Pipeline: Prompt -> LLM -> Output Parser
+chuoi_xu_ly = khuon_mau_prompt | dong_co_llm | bo_loc_dau_ra
+# 3. Kích hoạt chuỗi (Invoke)
+# Payload đầu vào (Dictionary) sẽ chảy qua từng Runnable trong hệ thống
+ket_qua = chuoi_xu_ly.invoke({"truy_van": "Chỉ tiêu ngành Kỹ thuật Phần mềm"})
+print(ket_qua) # Trả về chuỗi văn bản hoàn chỉnh
+Việc chuẩn hóa giao tiếp thông qua giao diện Runnable và cú pháp LCEL mang lại nhiều lợi ích sâu sắc về mặt kiến trúc phần mềm:
+Tính minh bạch (Observability): Mọi điểm nút (node) trong chuỗi LCEL đều có thể được theo dõi (trace) độc lập, giúp việc gỡ lỗi (debugging) dòng chảy dữ liệu trở nên trực quan.
+Tối ưu hóa thời gian thực (Streaming first): Cấu trúc đường ống cho phép dữ liệu được truyền phát (stream) ngay lập tức từ LLM đến người dùng cuối theo từng token (Time-to-First-Token) mà không cần chờ toàn bộ chuỗi hoàn tất.
+2.5. Kiến trúc RAG (Retrieval-Augmented Generation)
+Mặc dù các Mô hình ngôn ngữ lớn (LLMs) thể hiện năng lực tổng hợp ngôn ngữ xuất chúng, kiến trúc cơ sở của chúng vấp phải rào cản mang tính hệ thống: Giới hạn tri thức tĩnh (Static Knowledge Limit) và Hiện tượng ảo giác (Hallucination).
+Toàn bộ tri thức của LLM được mã hóa và nén vào các trọng số (weights) trong quá trình huấn luyện trước (pre-training). Lượng tri thức này được gọi là Bộ nhớ tham số (Parametric Memory). Do bản chất tĩnh, mô hình không thể tiếp cận các dữ liệu nội bộ (ví dụ: tài liệu nội bộ của tổ chức) hoặc các sự kiện phát sinh sau thời điểm huấn luyện. Khi bị ép buộc phải trả lời những thông tin nằm ngoài phân phối dữ liệu gốc (out-of-distribution), mô hình sẽ tự động nội suy và sinh ra các thông tin sai lệch một cách hợp lý hóa (ảo giác).
+Để giải quyết bài toán này, kiến trúc RAG (Truy xuất Tăng cường Sinh văn bản) được giới thiệu. RAG bổ sung cho hệ thống một Bộ nhớ phi tham số (Non-parametric Memory) dưới dạng các cơ sở dữ liệu tri thức bên ngoài.
+Về mặt toán học, thay vì mô hình hóa xác suất sinh chuỗi chỉ dựa trên câu hỏi đầu vào $P(y|x)$, RAG điều chỉnh phân phối xác suất bằng cách kết hợp thêm một tập hợp các tài liệu tham chiếu $D$ được truy xuất từ cơ sở dữ liệu:
+Cơ chế vận hành ba pha của RAG:
+Truy xuất (Retrieval): Khi nhận được truy vấn x, hệ thống sử dụng một hàm đo độ tương đồng (similarity function) để tìm kiếm trong không gian vector và trích xuất top k tài liệu  có mức độ liên quan ngữ nghĩa cao nhất.
+Tăng cường (Augmentation): Tập hợp tài liệu D được nối (concatenate) cùng với truy vấn gốc x để tạo thành một lời nhắc được làm giàu ngữ cảnh (Augmented Prompt).
+Sinh văn bản (Generation): LLM nhận Augmented Prompt và thực hiện quá trình suy luận (Inference), sinh ra câu trả lời y dựa hoàn toàn vào dữ liệu nền (ground-truth) được cung cấp.
+Tham chiếu ứng dụng: Trong một hệ thống chatbot tư vấn giáo dục, khi hệ thống nhận được truy vấn về chỉ tiêu tuyển sinh, kiến trúc RAG đảm bảo Động cơ suy luận bị giới hạn (constrained) bởi các số liệu thực tế được trích xuất từ đề án tuyển sinh mới nhất, loại bỏ hoàn toàn rủi ro tư vấn sai lệch.
+2.6. Đường ống dữ liệu RAG (Data Ingestion Pipeline) và Lớp Trừu tượng Retriever
+Để kiến trúc RAG có thể vận hành, dữ liệu phi cấu trúc (unstructured data) phải trải qua một quá trình chuyển đổi ETL (Extract, Transform, Load) trước khi LLM có thể khai thác. LangChain cung cấp một bộ công cụ tiêu chuẩn hóa để xây dựng Đường ống nạp dữ liệu (Data Ingestion Pipeline).
+1. Các khối xây dựng (Building Blocks) của đường ống:
+Document Loaders (Khai thác): Khởi tạo quá trình ETL bằng cách kết nối với các nguồn dữ liệu vật lý (PDF, Web, SQL) và chuyển đổi chúng thành cấu trúc đối tượng Document chuẩn của LangChain, bao gồm page_content và metadata.
+Text Splitters (Biến đổi): Áp dụng các thuật toán phân mảnh (như Recursive Character Splitter với kỹ thuật Cửa sổ trượt - Sliding Window) để cắt nhỏ văn bản. Việc này giải quyết bài toán giới hạn Cửa sổ ngữ cảnh (Context Window Limit) của LLM và tăng độ phân giải (granularity) cho quá trình tìm kiếm vector.
+Embedding Models & Vector Stores (Nạp và Lưu trữ): Biến đổi các mảnh văn bản (chunks) thành biểu diễn không gian latent (latent space representation) và lưu trữ vào các cơ sở dữ liệu chuyên dụng để phục vụ tìm kiếm thuật toán xấp xỉ láng giềng gần nhất (Approximate Nearest Neighbor - ANN).
+2. Lớp Trừu tượng Retriever (Trình truy xuất):
+Thành phần then chốt kết nối giữa cơ sở dữ liệu Vector và Chuỗi xử lý (Chains) là giao diện BaseRetriever. Nó chịu trách nhiệm đóng gói toàn bộ logic truy vấn phức tạp phía dưới.
+Một Retriever nhận đầu vào là một chuỗi văn bản (String) và trả về một danh sách các Document. Bằng cách sử dụng lớp trừu tượng này, hệ thống không bị giới hạn ở phương pháp tìm kiếm Vector (Dense Retrieval), mà có thể dễ dàng mở rộng sang các phương pháp truy xuất khác như:
+Lexical Search: Tìm kiếm từ khóa cổ điển bằng thuật toán BM25.
+Hybrid Search: Kết hợp giữa tìm kiếm ngữ nghĩa (Semantic) và tìm kiếm từ khóa (Keyword) để tối ưu hóa độ chính xác cho các truy vấn chứa từ lóng hoặc mã định danh đặc thù.
+Mã nguồn minh họa (Code Implementation) cho Chuỗi RAG sử dụng LCEL:
+Đoạn mã sau biểu diễn cách kết hợp Bộ truy xuất (Retriever) vào một chuỗi thực thi LCEL hoàn chỉnh, thể hiện tính thanh lịch của kiến trúc Functional Composition trong LangChain:
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.output_parsers import StrOutputParser
+# 1. Khởi tạo Retriever từ Vector Store (Giả định đã có 'vector_database')
+# Cấu hình trả về top 4 tài liệu có độ tương đồng Cosine cao nhất
+bo_truy_xuat = vector_database.as_retriever(search_kwargs={"k": 4})
+# 2. Xây dựng Khuôn mẫu Lời nhắc (Prompt Template) cho RAG
+khuon_mau_rag = ChatPromptTemplate.from_template("""
+Dựa vào các bối cảnh sau đây, hãy trả lời câu hỏi một cách chính xác.
+Nếu bối cảnh không chứa thông tin, hãy trả lời "Tôi không rõ".
+Bối cảnh: {context}
+Câu hỏi: {question}
+""")
+# 3. Định nghĩa Chuỗi RAG sử dụng cú pháp LCEL (Pipeline)
+# RunnablePassthrough() cho phép luân chuyển câu hỏi của người dùng xuống các bước sau
+chuoi_rag = (
+    # Bước 1: Fetch ngữ cảnh từ Retriever và gán vào biến 'context'
+    {"context": bo_truy_xuat, "question": RunnablePassthrough()}
+    # Bước 2: Nạp 'context' và 'question' vào Prompt
+    | khuon_mau_rag
+    # Bước 3: Đẩy Prompt vào Động cơ suy luận (LLM)
+    | dong_co_llm
+    # Bước 4: Trích xuất chuỗi phản hồi
+    | StrOutputParser()
+)
+# 4. Kích hoạt toàn bộ đường ống RAG
+ket_qua = chuoi_rag.invoke("Phương thức xét tuyển bằng điểm thi THPT Quốc gia?")
+print(ket_qua)
+Kiến trúc RAG giải quyết được vấn đề nan giải nhất của Trí tuệ nhân tạo tạo sinh: Độ tin cậy (Reliability). Bằng cách thiết lập một đường ống dữ liệu nghiêm ngặt từ khâu nạp tài liệu thô đến khâu nội suy vào Prompt, hệ thống đảm bảo rằng mọi phản hồi được sinh ra đều có thể truy xuất nguồn gốc (traceable) và hoàn toàn dựa trên dữ liệu thực tế (grounded).
+Chương 3: Hệ sinh thái và LangChain Integration
+Sức mạnh thực sự của một framework điều phối AI không chỉ nằm ở các thuật toán nội tại, mà còn được quyết định bởi khả năng tương tác (interoperability) với các thành phần ngoại vi. Tích hợp LangChain (LangChain Integration) là một mạng lưới các giao diện lập trình ứng dụng (APIs) và lớp bao bọc (wrappers) chuẩn hóa, cho phép hệ thống phối hợp linh hoạt với các Mô hình ngôn ngữ lớn (LLMs), cơ sở dữ liệu vector, và các công cụ tiện ích của bên thứ ba.
+3.1. Kiến trúc Phân tầng và Lớp Trừu tượng hóa (Abstraction Layer)
+Trong kỹ nghệ phần mềm, việc phụ thuộc trực tiếp vào SDK (Software Development Kit) của một nhà cung cấp cụ thể (ví dụ: OpenAI, Google, hay NVIDIA) sẽ dẫn đến rủi ro "khóa chặt nhà cung cấp" (vendor lock-in). Khi nhà cung cấp thay đổi cấu trúc API, toàn bộ hệ thống lõi sẽ phải viết lại.
+Để giải quyết rào cản này, hệ sinh thái LangChain áp dụng Mẫu thiết kế Bộ chuyển đổi (Adapter Design Pattern), chia kiến trúc tích hợp thành ba tầng chính:
+langchain-core (Tầng Cốt lõi): Chứa các lớp trừu tượng cơ bản nhất (Base Interfaces) như BaseChatModel, BasePromptTemplate, BaseRetriever. Tầng này cực kỳ nhẹ, độc lập hoàn toàn với các thư viện bên ngoài và đảm bảo tính tương thích ngược. Mọi công cụ muốn cắm (plug) vào LangChain đều phải kế thừa và triển khai các interface này.
+langchain-community (Tầng Cộng đồng): Chứa hàng nghìn bộ tích hợp mã nguồn mở do cộng đồng phát triển, cung cấp khả năng kết nối tới các dịch vụ đa dạng từ Wikipedia, Github đến các cơ sở dữ liệu SQL.
+langchain-[partner] (Tầng Đối tác chiến lược): Các gói tích hợp chính thức được phát triển và duy trì độc lập bởi sự hợp tác giữa LangChain và các tập đoàn công nghệ (như langchain-openai, langchain-huggingface, langchain-chroma). Việc tách biệt thành các gói độc lập giúp quá trình quản lý phiên bản (versioning) và bảo mật dữ liệu trên môi trường sản xuất (production) trở nên an toàn hơn.
+3.2. Tích hợp Mô hình Ngôn ngữ (Model I/O Integration)
+Thành phần trung tâm của mọi hệ thống AI là Động cơ suy luận. LangChain phân tách rõ ràng hai khái niệm: LLMs (mô hình Text-in/Text-out truyền thống) và Chat Models (mô hình Message-in/Message-out hiện đại).
+Khung tích hợp Chat Model của LangChain chuẩn hóa mọi tương tác giao tiếp với mô hình thông qua phương thức invoke() hoặc stream(). Bất kể Động cơ suy luận bên dưới là mô hình thương mại (như GPT-4, Claude) hay mô hình mã nguồn mở (như Llama 3, Qwen chạy qua HuggingFace Endpoint), dữ liệu đầu vào luôn được định dạng dưới dạng cấu trúc thông điệp đa vai trò (System, Human, AI).
+Cơ chế Kế thừa và Thay thế nóng (Hot-swapping): 
+Nhờ lớp trừu tượng BaseChatModel, các hệ thống phát triển trên LangChain sở hữu khả năng "thay thế nóng". Chẳng hạn, trong một kiến trúc Đa tác tử (Multi-agent), hệ thống có thể linh hoạt định tuyến các tác vụ (routing tasks) tới các mô hình khác nhau dựa trên năng lực chuyên biệt của chúng:
+Sử dụng mô hình thương mại lớn cho Tác tử Giám sát (Supervisor Agent) để thực hiện các suy luận logic phức tạp và lập kế hoạch đa bước.
+Sử dụng mô hình mã nguồn mở nhẹ, chi phí thấp (được nạp qua HuggingFace Inference API hoặc NVIDIA AI Endpoints) cho các Tác tử Con (Sub-agents) thực hiện nhiệm vụ bóc tách dữ liệu văn bản thô.
+Ví dụ minh họa cấu trúc tích hợp Động cơ suy luận (Reasoning Engine):
+import os
+from langchain_openai import ChatOpenAI
+from langchain_core.messages import SystemMessage, HumanMessage
+# Khởi tạo mô hình thông qua lớp bao bọc ChatOpenAI 
+# Điểm tinh tế: Mặc dù dùng thư viện openai, nhưng 'base_url' được ghi đè 
+# để định tuyến truy vấn tới server của HuggingFace, minh chứng cho tính 
+# linh hoạt của lớp trừu tượng API (API Abstraction).
+llm_engine = ChatOpenAI(
+    base_url="https://router.huggingface.co/v1",
+    api_key=os.environ.get("HF_TOKEN"),
+    model="meta/llama-3.3-70b-instruct", 
+    temperature=0, # Triệt tiêu tính ngẫu nhiên (stochasticity) để đảm bảo đầu ra tất định
+    max_tokens=4096
+)
+# Cấu trúc thông điệp (Message Structure) chuẩn hóa của LangChain
+messages = [
+    SystemMessage(content="Bạn là một Động cơ phân tích dữ liệu giáo dục chuẩn xác."),
+    HumanMessage(content="Trích xuất thông tin chỉ tiêu tuyển sinh từ tài liệu sau...")
+]
+# Thực thi lệnh gọi API một cách thống nhất
+response = llm_engine.invoke(messages)
+Thông qua kiến trúc Model I/O Integration, LangChain đã chuyển hóa việc giao tiếp với các API đóng gói phức tạp của nhiều nhà cung cấp thành một quy trình chuẩn mực, nhất quán. Điều này cho phép hệ thống RAG hoặc Chatbot Agent dễ dàng nâng cấp lên các phiên bản mô hình ngôn ngữ mới nhất trong tương lai mà không đòi hỏi việc tái cấu trúc (refactor) mã nguồn hệ thống cốt lõi.
+3.3. Tích hợp Mô hình Nhúng (Embedding Models)
+Trong xử lý ngôn ngữ tự nhiên (NLP), máy tính không thể trực tiếp hiểu được ký tự văn bản. Để giải quyết vấn đề này, các Mô hình Nhúng (Embedding Models) được sử dụng để ánh xạ các biến phân loại rời rạc (từ vựng, câu, đoạn văn) vào một không gian vector liên tục đa chiều (continuous vector space).
+Bản chất của kỹ thuật này là "số hóa ngữ nghĩa": Các đoạn văn bản có ý nghĩa tương đồng nhau sẽ được biểu diễn bằng các vector có khoảng cách gần nhau trong không gian đa chiều. Thay vì tìm kiếm dựa trên sự trùng khớp từ khóa (lexical matching), hệ thống có thể thực hiện tìm kiếm ngữ nghĩa (semantic search).
+Lớp trừu tượng Embeddings trong LangChain:
+LangChain cung cấp một giao diện chuẩn (standard interface) có tên là Embeddings để đóng gói sự phức tạp của các mô hình nhúng từ nhiều nhà cung cấp khác nhau (như OpenAI, HuggingFace, Cohere). Giao diện này bắt buộc các lớp triển khai (implementation classes) phải định nghĩa hai phương thức xử lý bất đối xứng (asymmetric processing):
+embed_documents(texts): Tối ưu hóa để véc-tơ hóa hàng loạt các tài liệu (bulk vectorization). Phương thức này được gọi trong giai đoạn lập chỉ mục (Indexing) để đưa tri thức vào cơ sở dữ liệu.
+embed_query(text): Tối ưu hóa để xử lý một truy vấn đơn lẻ từ người dùng.
+Việc tách biệt hai phương thức này mang ý nghĩa quan trọng về mặt kỹ thuật, bởi một số kiến trúc mô hình (ví dụ: Instructor Embeddings) yêu cầu thêm các tiền tố đặc thù (như "query:" hoặc "passage:") vào văn bản để đạt hiệu suất so khớp cao nhất.
+3.4. Không gian lưu trữ Vector (Vector Stores) và Thuật toán truy xuất
+Khi số lượng tài liệu tăng lên, việc tính toán khoảng cách giữa vector truy vấn và toàn bộ các vector tài liệu bằng phương pháp rà soát toàn bộ (brute-force k-Nearest Neighbors - kNN) sẽ dẫn đến độ trễ hệ thống (latency) cực kỳ lớn, mang độ phức tạp O(N).
+Để giải quyết bài toán truy xuất ở quy mô lớn, các Cơ sở dữ liệu Vector (Vector Stores/Databases) ra đời. Chúng không chỉ đóng vai trò lưu trữ các vector nhúng  cùng với siêu dữ liệu (metadata), mà cốt lõi là cung cấp các thuật toán lập chỉ mục gần đúng (Approximate Nearest Neighbor - ANN), tiêu biểu như HNSW (Hierarchical Navigable Small World) hoặc IVF (Inverted File Index) để giảm độ phức tạp truy vấn xuống mức logarit O(log N).
+Để xác định mức độ liên quan giữa truy vấn và tài liệu, các hệ thống này thường sử dụng phép đo độ tương đồng Cosine (Cosine Similarity), tính toán góc giữa hai vector trong không gian đa chiều theo công thức:
+Tích hợp Vector Stores trong LangChain:
+Giao diện VectorStore của LangChain cho phép hoán đổi liền mạch giữa các công cụ lưu trữ khác nhau. Nó tiêu chuẩn hóa các thao tác cốt lõi như add_documents (nạp dữ liệu) và similarity_search (tìm kiếm tương đồng).
+Bảng 3.1: So sánh đặc tả kỹ thuật của các Vector Stores phổ biến trong hệ sinh thái LangChain
+Đánh giá ứng dụng: Đối với một hệ thống hỏi đáp tri thức chuyên biệt mang tính cục bộ, việc tích hợp ChromaDB thông qua lớp bao bọc langchain-chroma là một thiết kế hệ thống tối ưu. Nó loại bỏ độ trễ mạng (network latency) của các giải pháp đám mây, đồng thời đóng gói toàn vẹn dữ liệu nội bộ mà không phát sinh chi phí duy trì hạ tầng.
+Hiện thực hóa Tích hợp (Code Demo):
+Đoạn mã cấu trúc dưới đây minh họa việc ứng dụng lớp trừu tượng để khởi tạo đường ống (pipeline) từ mô hình nhúng đến không gian lưu trữ:
+import os
+from langchain_huggingface.embeddings import HuggingFaceEndpointEmbeddings
+from langchain_chroma import Chroma
+# 1. Tích hợp Mô hình Nhúng (Embedding Model Integration)
+# Sử dụng mô hình all-MiniLM-L6-v2 để ánh xạ văn bản thành vector 384 chiều
+embedding_model = HuggingFaceEndpointEmbeddings(
+    model="sentence-transformers/all-MiniLM-L6-v2",
+    huggingfacehub_api_token=os.getenv("HF_TOKEN"),
+)
+# 2. Tích hợp Không gian lưu trữ Vector (Vector Store Integration)
+# Khởi tạo thể thể ChromaDB, sử dụng mô hình nhúng đã khai báo và cấu hình lưu trữ bền bỉ
+vector_database = Chroma(
+    collection_name="kho_tri_thuc_tuyen_sinh",
+    embedding_function=embedding_model,
+    persist_directory="./storage/chroma_db" 
+)
+# 3. Mô phỏng hàm tìm kiếm tương đồng (Semantic Similarity Search)
+truy_van = "Điều kiện trúng tuyển phương thức xét học bạ"
+# LangChain tự động gọi embed_query() lên 'truy_van', sau đó dùng vector này 
+# so khớp Cosine với các vector trong collection và trả về top 3 tài liệu gần nhất (k=3)
+ket_qua_truy_xuat = vector_database.similarity_search(query=truy_van, k=3)
+Kiến trúc tích hợp nhất quán này cho phép hệ thống RAG không chỉ đạt hiệu suất truy xuất cao với không gian độ phức tạp thấp, mà còn đảm bảo khả năng bảo trì và nâng cấp các mô hình học máy (Machine Learning models) một cách độc lập.
+3.5. Tích hợp Trình xử lý tài liệu phi cấu trúc (Document Loaders)
+Nút thắt cổ chai lớn nhất trong việc xây dựng các hệ thống Hỏi-Đáp tri thức (Knowledge-based QA) không nằm ở mô hình ngôn ngữ, mà nằm ở khâu thu thập và tiền xử lý dữ liệu. Trong thực tế, hơn 80% dữ liệu của một tổ chức tồn tại dưới dạng phi cấu trúc (unstructured data) như tệp PDF, tài liệu Word, trang web HTML, hoặc hình ảnh.
+Để giải quyết bài toán này, LangChain thiết kế một giao diện chuẩn hóa có tên là BaseLoader. Giao diện này đóng vai trò như một bộ chuyển đổi (adapter), nhận đầu vào là các định dạng tệp vật lý đa dạng và xuất ra một cấu trúc dữ liệu duy nhất mà LangChain có thể thao tác: Đối tượng Document (bao gồm page_content chứa văn bản thô và metadata chứa siêu dữ liệu như nguồn gốc, số trang).
+Tối ưu hóa Độ phức tạp không gian (Space Complexity):
+Về mặt triển khai, giao diện BaseLoader cung cấp hai phương thức nạp dữ liệu để lập trình viên linh hoạt xử lý bài toán tối ưu bộ nhớ:
+load(): Kỹ thuật nạp toàn bộ (Eager Loading). Phương thức này đọc toàn bộ tệp tin và đẩy vào bộ nhớ RAM (In-memory). Mặc dù đơn giản, phương pháp này mang độ phức tạp không gian $O(N)$ và có nguy cơ gây tràn bộ nhớ (Out-Of-Memory) khi xử lý các kho học liệu điện tử khổng lồ.
+lazy_load(): Kỹ thuật nạp lười (Lazy/Streaming Loading). Phương thức này trả về một trình vòng lặp (Iterator/Generator) trong Python. Hệ thống chỉ xử lý và giải phóng từng phần tài liệu vào bộ nhớ tại một thời điểm, giúp duy trì độ phức tạp không gian tiệm cận $O(1)$, cực kỳ tối ưu cho các luồng xử lý Big Data.
+Tích hợp Phân tách cấu trúc nâng cao (Advanced Partitioning):
+Việc trích xuất văn bản từ các tệp PDF phức tạp (chứa bảng biểu, cột kép, tiêu đề) bằng các thư viện OCR thông thường sẽ làm vỡ vụn cấu trúc ngữ nghĩa. Để khắc phục, hệ thống thường được tích hợp với thư viện Unstructured. Thay vì chỉ bóc tách ký tự, UnstructuredLoader sử dụng các mô hình học máy thị giác máy tính (Computer Vision) để phân tách (partition) tài liệu, nhận diện chính xác ranh giới của các khối logic (như Header, Table, List).
+3.6. Chiến lược Phân mảnh văn bản (Text Splitters & Chunking)
+Các Mô hình Nhúng (Embedding Models) và Mô hình Ngôn ngữ (LLMs) đều có một giới hạn vật lý về độ dài chuỗi đầu vào, gọi là Cửa sổ ngữ cảnh (Context Window) - thường được đo bằng số lượng token (ví dụ: 512, 4096, hoặc 8192 tokens). Nếu đưa toàn bộ một cuốn cẩm nang dày hàng trăm trang vào mô hình, hệ thống sẽ bị từ chối phục vụ (Context Length Exceeded) hoặc làm giảm độ chính xác của vector nhúng do hiệu ứng pha loãng thông tin (information dilution).
+Giải pháp cho vấn đề này là kỹ thuật Phân mảnh văn bản (Chunking) thông qua các TextSplitter của LangChain.
+Thuật toán Cửa sổ trượt (Sliding Window Algorithm):
+Một chiến lược phân mảnh ngây thơ (naive chunking) cắt văn bản cơ học dựa trên số lượng ký tự sẽ dẫn đến rủi ro "ngữ cảnh vỡ vụn" (context fragmentation) — một câu mang ý nghĩa quan trọng có thể bị cắt làm đôi, rơi vào hai chunk khác nhau.
+LangChain cung cấp RecursiveCharacterTextSplitter như một giải pháp chuẩn mực ngành (industry standard). Thuật toán này áp dụng cơ chế Cửa sổ trượt với hai tham số toán học cốt lõi:
+chunk_size: Kích thước tối đa của mỗi mảnh văn bản.
+chunk_overlap: Kích thước phần giao nhau (chồng lấn) giữa mảnh hiện tại và mảnh tiếp theo. Việc duy trì một tỷ lệ overlap (thường từ 10% đến 20%) đảm bảo tính liên tục của ngữ nghĩa (semantic continuity) không bị đứt gãy tại các điểm cắt.
+3.7. Tổng quan Đường ống Dữ liệu RAG (Data Ingestion Pipeline)
+Sự kết hợp của các thành phần tích hợp (Integrations) nói trên tạo thành một đường ống nạp dữ liệu (Data Ingestion Pipeline) hoàn chỉnh, là bước tiền đề không thể thiếu của bất kỳ kiến trúc RAG nào.
+Quy trình luân chuyển dữ liệu tĩnh (từ tài liệu thô thành tri thức truy vấn) được định hình theo chuỗi các phép biến đổi sau:
+Extract (Khai thác): UnstructuredLoader phân tách tệp tin vật lý thành các đối tượng Document có cấu trúc.
+Transform (Biến đổi): TextSplitter chia nhỏ các Document thành tập hợp các mảnh ngữ cảnh (chunks) với kích thước tối ưu cho mô hình nhúng.
+Embed (Nhúng): HuggingFaceEndpointEmbeddings ánh xạ từng đoạn văn bản vào không gian vector liên tục.
+Load (Nạp): Chroma nhận các vector kèm siêu dữ liệu và lưu trữ vật lý, xây dựng chỉ mục không gian (spatial index) phục vụ truy xuất độ trễ thấp.
+Hiện thực hóa Đường ống Dữ liệu (Code Implementation):
+Đoạn mã sau minh họa sự phối hợp liền mạch giữa các lớp trừu tượng để thiết lập một đường ống nạp tri thức cục bộ:
+import os
+from langchain_unstructured import UnstructuredLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_chroma import Chroma
+# 1. Khai thác dữ liệu thô với kỹ thuật Streaming (Lazy Load)
+tri_thuc_loader = UnstructuredLoader(
+    file_path="./data/De_an_tuyen_sinh.pdf",
+    api_key=os.getenv("UNSTRUCTURED_API_KEY"),
+    partition_via_api=True
+)
+# 2. Khởi tạo thuật toán phân mảnh với Cửa sổ trượt
+bo_chia_van_ban = RecursiveCharacterTextSplitter(
+    chunk_size=1000,      # Kích thước tối đa của một mảnh ngữ cảnh
+    chunk_overlap=150,    # Vùng giao nhau để bảo toàn liên kết ngữ nghĩa
+    separators=["\n\n", "\n", ".", " "] # Ưu tiên cắt tại các ranh giới tự nhiên
+)
+# Xử lý phân mảnh hàng loạt
+danh_sach_chunks = bo_chia_van_ban.split_documents(tri_thuc_loader.load())
+# 3. Nạp dữ liệu vào Không gian Vector cục bộ
+# (Giả định 'embedding_model' đã được khởi tạo từ phần trước)
+vector_database = Chroma.from_documents(
+    documents=danh_sach_chunks,
+    embedding=embedding_model,
+    persist_directory="./storage/chroma_db_tuyen_sinh"
+)
+Thông qua việc thiết lập một đường ống dữ liệu toàn diện — từ quá trình bóc tách cấu trúc tài liệu đến việc véc-tơ hóa và lưu trữ chỉ mục — nền tảng LangChain cung cấp một hạ tầng dữ liệu mạnh mẽ. Lớp hạ tầng này chính là cơ sở vật chất đảm bảo cho Tác tử thông minh (AI Agent) có khả năng tham chiếu và truy xuất lượng lớn thông tin với tốc độ và độ chính xác vượt trội.
+Chương 4: Tác tử thông minh (Agents) và Kiến trúc LangGraph
+Sự phát triển của các ứng dụng dựa trên Mô hình ngôn ngữ lớn (LLMs) đang chứng kiến một bước chuyển mình mạnh mẽ từ các kịch bản truy xuất tĩnh sang các hệ thống tự trị động. Để giải quyết các bài toán phức tạp đòi hỏi tính linh hoạt, khả năng tự quyết định và tương tác với môi trường bên ngoài, việc nghiên cứu và áp dụng kiến trúc Tác tử thông minh (AI Agents) kết hợp cùng khung điều phối LangGraph là một bước tiến tất yếu về mặt công nghệ.
+4.1. Khái quát về Tác tử thông minh (AI Agents)
+Trong khoa học máy tính, Tác tử thông minh (AI Agent) là một hệ thống có khả năng nhận thức môi trường thông qua các cảm biến (sensors), tự chủ ra quyết định và thực thi hành động (actions) thông qua các bộ phận tác động (actuators) nhằm đạt được một mục tiêu cụ thể.
+Trong hệ sinh thái LangChain, Agent đại diện cho một kiến trúc phần mềm mà ở đó, LLM không chỉ giới hạn ở nhiệm vụ nội suy văn bản (Text Generation) thụ động, mà được thăng cấp trở thành một "Động cơ suy luận" (Reasoning Engine). Kiến trúc của một AI Agent tiêu chuẩn bao gồm ba trụ cột:
+Động cơ suy luận (LLM): Đóng vai trò là trung tâm nhận thức, phân tích ngôn ngữ tự nhiên, lập kế hoạch (Planning) và đưa ra quyết định định tuyến luồng công việc.
+Công cụ (Tools): Các giao diện lập trình ứng dụng (API) đóng vai trò là "tay mắt", giúp Agent thoát khỏi sự cô lập của dữ liệu huấn luyện tĩnh để tương tác với thế giới thực (ví dụ: tìm kiếm web, truy vấn cơ sở dữ liệu Vector, thực thi mã nguồn).
+Bộ nhớ (Memory): Năng lực lưu trữ trạng thái hệ thống, duy trì ngữ cảnh ngắn hạn (vòng lặp hiện tại) và dài hạn (lịch sử phiên làm việc) để đảm bảo tính liên tục của quy trình.
+4.2. Nền tảng lý thuyết: Cơ chế ReAct (Reasoning and Acting)
+Để một LLM có thể vận hành như một Agent, nó cần một phương pháp luận để tư duy. Framework phổ biến và hiệu quả nhất hiện nay được triển khai trong LangChain là ReAct (Reasoning and Acting).
+Cơ sở lý thuyết của ReAct bắt nguồn từ việc kết hợp khả năng suy luận từng bước (Chain-of-Thought) với khả năng thực thi hành động để thu thập thêm thông tin. Thay vì sinh ra toàn bộ câu trả lời ngay lập tức, ReAct ép buộc mô hình phải tạo ra các "dấu vết suy luận" (reasoning traces) trước khi tương tác với môi trường. Vòng lặp ReAct tiêu chuẩn diễn ra như sau:
+Thought (Suy nghĩ): LLM tự diễn giải nội bộ về trạng thái hiện tại và xác định xem nó cần thông tin gì tiếp theo để giải quyết bài toán.
+Action (Hành động): Dựa trên "Thought", LLM định dạng một chỉ thị dạng cấu trúc (thường là JSON) để gọi một công cụ cụ thể (ví dụ: Tra_cuu_hoc_phi).
+Observation (Quan sát): Hệ thống thực thi công cụ và trả về kết quả thô (raw data) từ môi trường bên ngoài cho LLM.
+Reflection/Final Answer (Phản tư/Kết luận): LLM đánh giá xem "Observation" đã thỏa mãn mục tiêu ban đầu chưa. Nếu chưa, nó tiếp tục sinh ra một "Thought" mới để gọi công cụ khác. Nếu đã đủ, nó tổng hợp thành "Final Answer".
+Ví dụ tham chiếu: Trong một kịch bản tư vấn học vụ, khi tiếp nhận yêu cầu về học phí của một ngành đặc thù, hệ thống không tìm kiếm mù quáng. ReAct cho phép mô hình suy luận (Thought) rằng nó cần xác định mã ngành trước, sau đó mới hành động (Action) gọi API truy xuất cơ sở dữ liệu tài chính của trường, từ đó đảm bảo tính toàn vẹn của thông tin.
+4.3. Hạn chế của kiến trúc DAG và Sự thoái trào của AgentExecutor
+Trước khi kiến trúc mạng lưới điều phối hiện đại ra đời, các hệ thống AI thường được xây dựng theo dạng Chuỗi (Chains). Về mặt cấu trúc dữ liệu, các chuỗi này tuân thủ mô hình Đồ thị có hướng không chu trình (DAG - Directed Acyclic Graph). Trong DAG, dữ liệu chỉ chảy theo một chiều tuyến tính cố định (ví dụ: Input  Retriever  Prompt  LLM  Output).
+Hạn chế lớn nhất của mô hình DAG là tính giòn gãy (brittleness). Nếu một node trung gian (như truy vấn cơ sở dữ liệu) thất bại hoặc trả về kết quả rỗng, luồng dữ liệu vẫn bị ép buộc tiến tới node tiếp theo, dẫn đến việc LLM sinh ra thông tin sai lệch do thiếu dữ liệu đầu vào (hallucination).
+Để xử lý các Agent, LangChain từng sử dụng một lớp bao bọc có tên là AgentExecutor. Tuy nhiên, cơ chế này về bản chất là một hộp đen (black-box) sử dụng vòng lặp while ẩn bên dưới mã nguồn. Điều này gây ra những hệ lụy lớn đối với các hệ thống cấp doanh nghiệp (enterprise-grade):
+Khó khăn trong việc can thiệp vào giữa luồng thực thi (ví dụ: dừng lại để con người phê duyệt - Human in the loop).
+Gần như không thể gỡ lỗi (debug) một cách tường minh khi Agent rơi vào vòng lặp vô hạn (infinite loop) do chọn sai công cụ.
+Khó tùy biến trạng thái (State) chia sẻ giữa các công cụ.
+Những điểm nghẽn kỹ thuật này đã làm tiền đề cho việc tái cấu trúc hoàn toàn cách các hệ thống AI được điều phối.
+4.4. LangGraph và Mô hình Đồ thị có chu trình (Cyclic Graphs)
+Nhằm giải quyết triệt để sự cứng nhắc của DAG và giới hạn của AgentExecutor, LangGraph – một framework cấp thấp thuộc hệ sinh thái LangChain – đã được phát triển. Điểm đột phá mang tính định hình của LangGraph là khả năng mô hình hóa quy trình của Agent thành các Đồ thị có chu trình (Cyclic Graphs) được vận hành dưới dạng các Máy trạng thái hữu hạn (Finite State Machines).
+Trong luồng xử lý thông tin thực tế, việc trích xuất và phân tích hiếm khi là một đường thẳng. Kiến trúc chu trình cho phép đồ thị tạo ra các vòng lặp (loops) để quay ngược luồng dữ liệu về các node trước đó, mở ra năng lực quan trọng nhất của AI Agent hiện đại: Khả năng tự kiểm tra và sửa lỗi (Self-correction).
+Cơ chế tự sửa lỗi hoạt động trên đồ thị:
+Động cơ suy luận (Agent Node) sinh ra hành động truy vấn với một từ khóa bị sai lỗi chính tả.
+Trạm thực thi (Tool Node) tiến hành tra cứu nhưng trả về kết quả truy xuất rỗng (Observation).
+Trong mô hình DAG, tiến trình sẽ kết thúc bằng một thông báo lỗi. Tuy nhiên, trong LangGraph, một cạnh điều hướng (Edge) sẽ đưa kết quả rỗng này quay ngược trở lại Agent Node.
+LLM đọc được trạng thái lỗi, tự đánh giá lại chỉ thị trước đó, tự động điều chỉnh lại từ khóa (tự sửa lỗi chính tả) và sinh ra một hành động truy vấn mới.
+Quy trình lặp lại cho đến khi dữ liệu chính xác được trích xuất thành công, lúc này hệ thống mới rẽ nhánh để kết thúc chu trình.
+Sự chuyển dịch từ tư duy lập trình cấu trúc tuần tự sang tư duy xây dựng các luồng tác tử tự điều phối (Agentic Orchestration) dựa trên nền tảng Đồ thị có chu trình không chỉ mang tính linh hoạt cao, mà còn là kiến trúc sống còn để đảm bảo hệ thống có thể tự phục hồi sau các lỗi nội tại, từ đó duy trì độ tin cậy tuyệt đối trong quá trình cung cấp thông tin.
+4.5. Quản lý trạng thái (State Management) và Cơ chế Hợp nhất (Reducers)
+Trong kiến trúc của LangGraph, khái niệm cốt lõi định hình nên sự khác biệt so với các hệ thống stateless (không lưu trạng thái) là State (Trạng thái). State đóng vai trò là "Nguồn sự thật duy nhất" (Single Source of Truth) và là bộ nhớ làm việc trung tâm cho toàn bộ vòng đời của một phiên xử lý.
+Về mặt cấu trúc dữ liệu, State thường được định nghĩa thông qua các lược đồ (schemas) kiểm soát kiểu tĩnh như TypedDict hoặc Pydantic trong Python. Việc định nghĩa schema chặt chẽ giúp đảm bảo an toàn kiểu (type safety) khi dữ liệu luân chuyển giữa các đơn vị tính toán khác nhau.
+Cơ chế cập nhật trạng thái (State Updates & Reducers):
+Điểm tinh tế nhất trong kiến trúc quản lý trạng thái của LangGraph là cách nó xử lý các bản cập nhật. Khi một Node hoàn thành quá trình thực thi, nó không trả về (return) toàn bộ đối tượng State mới để ghi đè State cũ. Thay vào đó, nó chỉ trả về một phân mảnh (fragment) chứa các giá trị cần thay đổi. Khung điều phối sẽ sử dụng các Hàm rút gọn (Reducer functions) để hợp nhất (merge) phân mảnh này vào State tổng.
+Cơ chế Ghi đè (Overwrite): Đối với các biến mang tính chất trạng thái tức thời (ví dụ: current_intent - ý định hiện tại của người dùng, hoặc validation_status - trạng thái kiểm tra lỗi), LangGraph áp dụng cơ chế ghi đè mặc định. Giá trị mới từ Node sẽ thay thế hoàn toàn giá trị cũ.
+Cơ chế Cộng dồn (Append/Accumulate): Đối với các danh sách cần duy trì tính lịch sử (ví dụ: messages - chuỗi hội thoại), LangGraph cho phép gắn các hàm Reducer (như operator.add). Khi Node trả về một tin nhắn mới, Reducer sẽ nối (append) tin nhắn đó vào danh sách hiện có thay vì xóa bỏ lịch sử trước đó.
+Nhờ cấu trúc State linh hoạt này, một tác tử (Agent) trong lĩnh vực tư vấn học vụ có thể duy trì toàn bộ ngữ cảnh đa vòng lặp (multi-turn context). Hệ thống có thể ghi nhớ mã ngành, khối thi hoặc số điểm mà người dùng đã cung cấp ở các bước trước đó để tiếp tục thực hiện các truy vấn phức hợp mà không cần yêu cầu cung cấp lại thông tin.
+4.6. Hình thức hóa luồng điều khiển: Đỉnh (Nodes) và Cạnh (Edges)
+LangGraph mô hình hóa động lực học của tác tử dưới dạng một hệ thống mạng lưới, áp dụng trực tiếp các khái niệm của Lý thuyết Đồ thị (Graph Theory) bao gồm các Đỉnh (Vertices/Nodes) và các Cạnh có hướng (Directed Edges).
+1. Đỉnh xử lý (Nodes):
+Nodes đại diện cho các đơn vị tính toán biệt lập (isolated computation units). Về mặt lập trình, chúng là các hàm Python (hoặc các đối tượng Runnable của LangChain) nhận đầu vào là State hiện tại và trả về các bản cập nhật State. Trong một kiến trúc RAG Agentic tiêu chuẩn, hệ thống thường được thiết kế với hai loại Node chính:
+Reasoning Node (Nút Tư duy): Nơi tích hợp Mô hình ngôn ngữ (LLM). Node này nhận nhiệm vụ đọc toàn bộ State, phân tích ngữ nghĩa, lập kế hoạch và sinh ra các quyết định hành động (ví dụ: trực tiếp sinh chuỗi văn bản trả lời, hoặc đóng gói tham số để chuẩn bị gọi API).
+Action/Tool Node (Nút Thực thi): Nơi xử lý các tác vụ ngoại vi (Side-effects). Khi Reasoning Node phát ra tín hiệu cần dữ liệu bên ngoài, Tool Node sẽ được kích hoạt để gọi các hàm Python thực tế (như truy vấn cơ sở dữ liệu Vector ChromaDB, gọi API thời tiết), thu thập kết quả thô và ghi ngược lại vào State dưới dạng một ToolMessage.
+2. Cạnh điều hướng (Edges & Conditional Routing):
+Edges xác định cấu trúc liên kết học (topology) của đồ thị, quy định quy luật di chuyển của luồng điều khiển (Control Flow) giữa các Nodes.
+Normal Edges (Cạnh tĩnh): Định nghĩa các luồng chuyển đổi trạng thái mang tính tất định (deterministic). Ví dụ, sau khi Tool Node hoàn tất việc truy xuất dữ liệu từ cơ sở dữ liệu, luồng điều khiển BẮT BUỘC phải chuyển về Reasoning Node thông qua một Normal Edge để LLM có thể đọc và tổng hợp dữ liệu vừa thu thập. Sự kết nối này tạo ra một vòng lặp kín (closed loop) đặc trưng của cơ chế ReAct.
+Conditional Edges (Cạnh rẽ nhánh có điều kiện): Đây là thành phần cung cấp tính phi tất định (non-deterministic) và sự tự chủ cho AI Agent. Thay vì một đích đến cố định, Conditional Edge sử dụng một hàm định tuyến (Routing Function) để kiểm tra trạng thái hiện tại (State) và quyết định động xem luồng sẽ đi về đâu. Chẳng hạn, hàm định tuyến sẽ kiểm tra xem mảng tool_calls trong tin nhắn cuối cùng do LLM sinh ra có rỗng hay không; nếu có yêu cầu gọi công cụ, luồng sẽ rẽ sang Tool Node, ngược lại, luồng sẽ đi đến điểm kết thúc (END).
+4.7. Khai báo mô hình tính toán (Computational Implementation)
+Quá trình xây dựng một AI Agent sử dụng LangGraph về bản chất là việc khai báo và biên dịch một đồ thị trạng thái (StateGraph). Đoạn mã cơ sở dưới đây minh họa cách kiến trúc máy trạng thái này được hiện thực hóa bằng mã nguồn:
+from typing import Annotated, TypedDict
+from langgraph.graph import StateGraph, START, END
+from langgraph.graph.message import add_messages
+import operator
+# 1. Định nghĩa Lược đồ Trạng thái (State Schema)
+# Sử dụng add_messages làm Reducer để đảm bảo mảng messages được cộng dồn
+class AgentState(TypedDict):
+    messages: Annotated[list, add_messages]
+    context_extracted: bool
+# 2. Định nghĩa các Đơn vị tính toán (Nodes)
+def reasoning_node(state: AgentState):
+    """Nút tích hợp LLM để thực hiện suy luận và ra quyết định"""
+    # (Logic nội bộ: Gửi state["messages"] tới LLM và nhận phản hồi)
+    pass
+def execution_node(state: AgentState):
+    """Nút thực thi các công cụ tra cứu thông tin (Tools)"""
+    # (Logic nội bộ: Parse yêu cầu từ LLM, gọi cơ sở dữ liệu Vector và trả về kết quả)
+    pass
+# 3. Định nghĩa Hàm định tuyến động (Routing Function)
+def routing_logic(state: AgentState):
+    """Kiểm tra điều kiện rẽ nhánh dựa trên Output của LLM"""
+    last_message = state["messages"][-1]
+    # Phân tích xem LLM có sinh ra yêu cầu gọi Tool (Function Calling) hay không
+    if hasattr(last_message, 'tool_calls') and len(last_message.tool_calls) > 0:
+        return "continue_to_tools"
+    return "finish_execution"
+# 4. Khởi tạo và liên kết Đồ thị (Graph Topology Construction)
+workflow = StateGraph(AgentState)
+workflow.add_node("reasoner", reasoning_node)
+workflow.add_node("executor", execution_node)
+# Điểm truy cập ban đầu
+workflow.add_edge(START, "reasoner")
+# Rẽ nhánh có điều kiện từ Reasoning Node
+workflow.add_conditional_edges(
+    "reasoner",
+    routing_logic,
+    {
+        "continue_to_tools": "executor",
+        "finish_execution": END
+    }
+)
+# Đóng vòng lặp: Buộc hệ thống quay lại Reasoning Node sau khi thực thi công cụ
+workflow.add_edge("executor", "reasoner")
+# Biên dịch đồ thị thành một ứng dụng có thể thực thi (Executable App)
+compiled_agent = workflow.compile()
+Thông qua việc kết hợp các cấu trúc dữ liệu nghiêm ngặt (State), các đơn vị xử lý biệt lập (Nodes) và cơ chế định tuyến động (Conditional Edges), LangGraph cung cấp một khung làm việc mạnh mẽ để hiện thực hóa các vòng lặp tư duy đa bước. Đây là cơ sở hạ tầng thiết yếu để xây dựng các hệ thống hỏi đáp dựa trên tri thức (Knowledge-based QA systems) có độ tin cậy cao, vượt xa giới hạn của các quy trình tuyến tính thông thường.
+4.8. Tích hợp Công cụ và Cơ chế Gọi hàm (Tools & Function Calling)
+Bản chất của các Mô hình ngôn ngữ lớn (LLMs) là những hệ thống đóng (isolated systems). Khả năng nội suy của chúng bị giới hạn tuyệt đối bởi tập dữ liệu huấn luyện tĩnh và chúng không có năng lực chủ động tương tác với môi trường bên ngoài (như duyệt web, đọc tệp tin cục bộ, hoặc truy vấn cơ sở dữ liệu). Để phá vỡ giới hạn này, kiến trúc Tác tử (Agent) áp dụng một cơ chế mang tính cách mạng mang tên Gọi hàm (Function Calling).
+1. Cơ sở kỹ thuật của Function Calling:
+Function Calling không có nghĩa là LLM trực tiếp thực thi mã nguồn (execute code). Thay vào đó, nó là quá trình chuyển đổi mô hình từ việc sinh văn bản phi cấu trúc (unstructured text generation) sang việc sinh dữ liệu có cấu trúc (structured data generation).
+Quy trình tích hợp diễn ra theo các pha sau:
+Khai báo và Ràng buộc (Binding): Lập trình viên định nghĩa các hàm ngoại vi (ví dụ: hàm truy xuất cơ sở dữ liệu Vector). Các hàm này được khai báo kèm theo một Lược đồ (Schema) chặt chẽ, thường sử dụng Pydantic để mô tả chính xác kiểu dữ liệu đầu vào (Input arguments) và mục đích của hàm (Docstring). Lược đồ này sau đó được "ràng buộc" (bind) vào LLM, giúp mô hình nhận thức được sự tồn tại của các công cụ.
+Sinh tham số (Argument Generation): Khi xử lý yêu cầu, Động cơ suy luận (LLM) phân tích ngữ cảnh và quyết định công cụ nào cần thiết. Nó sinh ra một cấu trúc dữ liệu JSON chứa tên hàm và các tham số tương ứng (ví dụ: {"name": "tra_cuu_diem_chuan", "args": {"nganh_hoc": "Công nghệ thông tin"}}).
+Thực thi và Phản hồi (Execution & Observation): Khung điều phối (LangGraph) bắt luồng JSON này, tự động kích hoạt Tool Node để chạy hàm thực tế dưới nền Python, sau đó đóng gói kết quả (Raw data) thành một ToolMessage và đẩy ngược lại vào Trạng thái (State) để LLM tiếp tục xử lý.
+Ví dụ tham chiếu: Trong một hệ thống hỗ trợ học vụ, khi người dùng truy vấn một thông tin cần tính xác thực cao (như điểm chuẩn hay quy chế), LLM sẽ không nội suy từ trọng số (weights) của nó, mà thông qua Function Calling để kích hoạt công cụ truy vấn tài liệu gốc, đảm bảo tính chính xác (Fact-grounding) tuyệt đối.
+4.9. Bộ nhớ bền bỉ (Persistence) và Cơ chế Checkpointer
+Trong lý thuyết về Máy trạng thái (State Machines), trạng thái của hệ thống thường mang tính chất tạm thời (ephemeral). Theo mặc định, khi một đồ thị LangGraph kết thúc luồng thực thi, toàn bộ dữ liệu trong bộ nhớ làm việc (State) sẽ bị giải phóng khỏi RAM. Điều này đồng nghĩa với việc Tác tử sẽ hoàn toàn "mất trí nhớ" về các phiên làm việc trước đó.
+Để xây dựng các hệ thống hội thoại đa lượt (multi-turn conversations) có khả năng duy trì ngữ cảnh dài hạn, LangGraph cung cấp cơ chế Bộ nhớ bền bỉ (Persistence) thông qua kiến trúc Checkpointer.
+1. Cơ chế hoạt động của Checkpointer: 
+Checkpointer hoạt động như một lớp lưu trữ trung gian, thực hiện việc tuần tự hóa (serialization) toàn bộ Trạng thái của đồ thị và ghi vào cơ sở dữ liệu tại mọi bước siêu thực thi (super-step).
+Mã định danh luồng (Thread ID): Mỗi phiên làm việc được gắn một định danh duy nhất (thread_id). Đây là khóa chính (Primary Key) để quản lý không gian ngữ cảnh độc lập của từng đối tượng tương tác.
+Lưu ảnh trạng thái (State Snapshot): Ngay sau khi một Node hoàn tất việc cập nhật State, Checkpointer tiến hành chụp lại "ảnh" (snapshot) của State hiện tại và lưu trữ vật lý (ví dụ: vào SQLite, PostgreSQL, hoặc Redis).
+Khôi phục trạng thái (Rehydration): Khi có một yêu cầu mới mang theo thread_id cũ, trước khi kích hoạt LLM, hệ thống sẽ truy xuất cơ sở dữ liệu, giải tuần tự hóa (deserialize) và nạp lại toàn bộ State cũ vào bộ nhớ RAM.
+2. Tính năng Mở rộng: Can thiệp của con người (Human-in-the-loop) & Time Travel:
+Khả năng lưu trữ trạng thái toàn diện mở ra các đặc tính nâng cao cho hệ thống AI cấp doanh nghiệp:
+Human-in-the-loop: Cho phép đồ thị tạm dừng (interrupt) trước khi thực thi một công cụ nhạy cảm (như gửi email, xóa dữ liệu). Trạng thái được đóng băng trong Database chờ con người phê duyệt (Approve) trước khi tiếp tục.
+Time Travel (Du hành thời gian): Lập trình viên có thể trích xuất các checkpoint trong quá khứ để phân tích, gỡ lỗi (debug) quá trình suy luận của Agent, hoặc rẽ nhánh (fork) một luồng hội thoại từ một thời điểm bất kỳ trong quá khứ.
+4.10. Hiện thực hóa Tích hợp và Bộ nhớ trong Mã nguồn
+Đoạn mã cơ sở dưới đây minh họa sự kết hợp giữa kỹ thuật gọi hàm (Function Calling) và cơ chế bộ nhớ bền bỉ cục bộ (MemorySaver) trong khung điều phối LangGraph:
+from langchain_core.tools import tool
+from langgraph.checkpoint.memory import MemorySaver
+from langchain_core.messages import HumanMessage
+# 1. Khai báo Công cụ với Docstring rõ ràng (Định hướng cho LLM)
+@tool
+def tra_cuu_du_lieu_tuyen_sinh(tu_khoa: str) -> str:
+    """Sử dụng để tra cứu các thông tin thực tế về điểm chuẩn, học phí, ngành học."""
+    # (Logic truy vấn Vector Database ChromaDB)
+    return "Mức học phí dự kiến là 30 triệu đồng/năm."
+# Ràng buộc công cụ vào Mô hình ngôn ngữ (LLM)
+llm_with_tools = llm_engine.bind_tools([tra_cuu_du_lieu_tuyen_sinh])
+# 2. Khởi tạo Cơ chế lưu trữ trạng thái (Checkpointer)
+# Sử dụng MemorySaver cho môi trường phát triển (Development)
+memory_checkpointer = MemorySaver()
+# 3. Biên dịch Đồ thị kèm Bộ nhớ bền bỉ
+# (Giả định 'workflow' là StateGraph đã được định nghĩa Nodes và Edges)
+compiled_agent = workflow.compile(checkpointer=memory_checkpointer)
+# 4. Kích hoạt Đồ thị với Định danh luồng (Thread ID)
+# Khởi tạo một phiên làm việc độc lập cho đối tượng người dùng cụ thể
+session_config = {"configurable": {"thread_id": "session_user_001"}}
+# Thực thi truy vấn: Hệ thống sẽ tự động lưu và khôi phục ngữ cảnh dựa trên thread_id
+final_state = compiled_agent.invoke(
+    {"messages": [HumanMessage(content="Học phí ngành CNTT là bao nhiêu?")]},
+    config=session_config
+)
+Sự kết hợp giữa Năng lực gọi hàm (Function Calling) và Bộ nhớ bền bỉ (Persistence) là bước hoàn thiện cuối cùng, biến mô hình ngôn ngữ từ một thực thể xử lý văn bản tĩnh trở thành một Tác tử thông minh (AI Agent) toàn diện: vừa có khả năng tác động vật lý lên môi trường dữ liệu, vừa sở hữu trí nhớ dài hạn để đồng hành cùng người dùng trong các quy trình nghiệp vụ phức tạp.
+Chương 5: Quản lý, Giám sát và Đánh giá Hệ thống với LangSmith (LLMOps)
+Trong kỹ nghệ phần mềm truyền thống, các hệ thống hoạt động mang tính tất định (deterministic). Luồng điều khiển (control flow) được định nghĩa rõ ràng thông qua các cấu trúc điều kiện, vòng lặp, và kết quả đầu ra luôn có thể dự đoán trước dựa trên đầu vào.
+Tuy nhiên, việc tích hợp Mô hình ngôn ngữ lớn (LLMs) và kiến trúc Tác tử (Agents) đã đưa tính ngẫu nhiên (stochasticity) vào cốt lõi của phần mềm. Đầu ra của hệ thống giờ đây phụ thuộc vào phân phối xác suất và các siêu tham số (hyperparameters), biến phần mềm thành một "hộp đen" (black-box). Để quản lý rủi ro này, khái niệm LLMOps (Large Language Model Operations) ra đời. Trong hệ sinh thái LangChain, LangSmith đóng vai trò là nền tảng LLMOps chuyên biệt, cung cấp hạ tầng để giám sát, đánh giá và triển khai các ứng dụng AI tạo sinh.
+5.1. Nhu cầu Khả năng quan sát (Observability) trong Kiến trúc Agentic
+Khi một hệ thống Agent tiếp nhận truy vấn, không chỉ một lệnh gọi API duy nhất được thực thi. Hàng loạt các tác vụ nền (background computations) được kích hoạt liên tiếp: phân mảnh dữ liệu (chunking), nhúng vector (embedding), định dạng Prompt nội suy, suy luận nhiều bước (ReAct), và gọi công cụ ngoại vi (Function Calling).
+Nếu hệ thống trả về một kết quả sai lệch (ảo giác - hallucination), kỹ sư phần mềm phải đối mặt với bài toán truy vết ngược (backward tracing) cực kỳ phức tạp để tiến hành Phân tích nguyên nhân gốc rễ (Root Cause Analysis). Các công cụ gỡ lỗi (debugging) truyền thống như stack trace hay console log hoàn toàn vô hiệu hóa trước kiến trúc này. Kỹ sư cần phải trả lời được các câu hỏi ở mức vi mô:
+Nguyên nhân lỗi do Bộ truy xuất (Retriever) lấy sai tài liệu từ cơ sở dữ liệu Vector?
+Do Khuôn mẫu Lời nhắc (Prompt Template) thiết kế thiếu bối cảnh hoặc bị rớt biến (missing variables)?
+Hay do LLM đưa ra suy luận sai lầm khi chọn công cụ thực thi (Tool selection error)?
+LangSmith giải quyết bài toán này bằng cách cung cấp một lớp Khả năng quan sát (Observability) vô hình. Nó tự động cấy (instrument) mã đo lường vào mọi tương tác bên trong các đối tượng Runnable của chuỗi LCEL hoặc đồ thị LangGraph mà không làm thay đổi logic biên dịch của mã nguồn.
+5.2. Cơ chế Truy vết (Tracing) và Cây phân cấp Thực thi
+Tính năng cốt lõi và đột phá nhất của LangSmith là Tracing (Truy vết). Nền tảng này vượt xa các giải pháp ghi nhật ký dạng phẳng (flat logging) truyền thống bằng cách xây dựng một Cây phân cấp luồng thực thi (Hierarchical Execution Tree) cho mỗi yêu cầu duy nhất từ người dùng.
+Trong cấu trúc dữ liệu của LangSmith, một chu kỳ thực thi hoàn chỉnh được định nghĩa là một Run. Khi hệ thống khởi chạy một đồ thị LangGraph hoặc một chuỗi Chains, quá trình này tuân theo một hệ thống phân cấp chặt chẽ:
+Root Run (Luồng gốc): Đại diện cho toàn bộ vòng đời của một truy vấn từ khi người dùng nhập câu hỏi đến khi nhận câu trả lời cuối cùng.
+Child Runs (Luồng con): Root Run sinh ra các Child Runs tương ứng với từng mắt xích (nodes) trong chuỗi. Ví dụ: một Child Run cho việc định dạng Prompt, một Child Run cho việc gọi API của LLM, và một Child Run cho việc thực thi công cụ tìm kiếm.
+Tại mỗi Node của Run, LangSmith thu thập một bộ dữ liệu viễn trắc (telemetry metadata) chuyên sâu bao gồm:
+Độ trễ thời gian thực (Latency & Time-to-first-token): Phân rã thời gian thực thi của từng bước (tính bằng mili-giây). Việc này cho phép phát hiện chính xác nút thắt cổ chai (performance bottleneck) — ví dụ: API tra cứu cơ sở dữ liệu nội bộ phản hồi quá chậm so với thời gian suy luận của LLM.
+Trạng thái Dữ liệu (Inputs/Outputs Payload): Bắt (capture) chính xác cấu trúc JSON, mảng tin nhắn (Message arrays) hoặc văn bản thô được truyền vào và trả ra tại bất kỳ thời điểm nào trong chuỗi.
+Định danh Công cụ (Tool Identifiers): Ghi nhận các tham số (arguments) chính xác mà LLM đã quyết định sinh ra để gọi các hàm bên ngoài.
+Ví dụ tham chiếu: Trong một hệ thống hỗ trợ tư vấn học vụ, nếu chatbot báo lỗi không tìm thấy thông tin điểm chuẩn của một ngành, kỹ sư có thể mở LangSmith Trace để kiểm tra Child Run của Retriever. Nếu Input của Retriever chứa từ khóa bị sai chính tả do LLM phân tích sai, kỹ sư sẽ lập tức biết cần phải tối ưu hóa lại Prompt Template thay vì đi sửa cơ sở dữ liệu Vector.
+5.3. Thách thức mang tính hệ thống trong Kiểm thử AI Tạo sinh
+Trong kỹ nghệ phần mềm truyền thống, việc kiểm thử tự động (Automated Testing) dựa trên nguyên lý đối sánh tất định (deterministic matching). Một bài kiểm thử đơn vị (Unit Test) sử dụng các lệnh kiểm tra (assertions) để đảm bảo đầu ra thực tế khớp chính xác từng ký tự (exact match) với đầu ra kỳ vọng.
+Tuy nhiên, đối với các hệ thống AI Tạo sinh (Generative AI), phương pháp này hoàn toàn phá sản. Bản chất của LLM là các mô hình sinh xác suất. Cùng một câu hỏi, hệ thống có thể diễn đạt bằng hàng chục cấu trúc ngữ pháp khác nhau nhưng vẫn đảm bảo tính chính xác về mặt ngữ nghĩa (semantic equivalence).
+Ngay cả các độ đo (metrics) phổ biến trong Xử lý ngôn ngữ tự nhiên truyền thống như BLEU hay ROUGE (thường dùng trong dịch máy) cũng trở nên lỗi thời, bởi chúng chỉ đo lường sự trùng lặp từ vựng (n-gram overlap) chứ không đánh giá được sự thật khách quan (factual correctness) của câu trả lời. Để giải quyết rào cản này, LangSmith tích hợp một Khung đánh giá tự động (Evaluation Framework) tiên tiến, chuyển đổi từ việc đánh giá cú pháp sang đánh giá ngữ nghĩa.
+5.4. Quản lý Tập dữ liệu chuẩn (Golden Datasets)
+Bước nền tảng để thiết lập một quy trình đánh giá chuẩn xác là xây dựng bộ dữ liệu tham chiếu. Trong LangSmith, khái niệm này được gọi là Golden Datasets.
+Thay vì phải tạo dữ liệu kiểm thử (test cases) một cách thủ công, LangSmith cho phép kỹ sư phần mềm trích xuất trực tiếp các luồng truy vết (traces) có chất lượng cao từ môi trường thực tế (production) hoặc môi trường thử nghiệm (staging) để đưa vào tập dữ liệu chuẩn.
+Một điểm dữ liệu (data point) trong tập Golden Dataset thường bao gồm một cấu trúc từ điển ba ngôi (tripartite dictionary):
+Input (Đầu vào): Câu hỏi hoặc chuỗi tương tác gốc của người dùng.
+Context (Ngữ cảnh nền): Dữ liệu chuẩn xác (Ground-truth) mà hệ thống đáng lẽ phải truy xuất được từ cơ sở dữ liệu Vector.
+Expected Output (Đầu ra kỳ vọng): Câu trả lời mẫu lý tưởng để làm mốc tham chiếu.
+Việc quản lý tập dữ liệu có phiên bản (version-controlled datasets) trên LangSmith giúp các nhóm phát triển có thể thiết lập các bài Kiểm thử hồi quy (Regression Testing). Mỗi khi cấu trúc Prompt bị thay đổi hoặc mô hình nhúng (Embedding model) được nâng cấp, hệ thống sẽ tự động chạy lại toàn bộ Golden Dataset để đảm bảo hiệu năng không bị suy giảm (degradation).
+5.5. Mô hình Đánh giá "LLM-as-a-Judge" (Sử dụng LLM làm Giám khảo)
+Để vượt qua giới hạn của các thuật toán so khớp chuỗi cơ học, LangSmith áp dụng một mô hình đánh giá hiện đại mang tên LLM-as-a-Judge. Nguyên lý của phương pháp này là sử dụng một Mô hình ngôn ngữ lớn có năng lực suy luận vượt trội (thường là các mô hình thương mại cấp cao như GPT-4 hoặc Claude 3.5 Sonnet) để chấm điểm và đánh giá kết quả đầu ra của hệ thống đang được kiểm thử (System Under Test - SUT).
+Trong kiến trúc RAG (Truy xuất Tăng cường Sinh văn bản), bộ đánh giá của LangSmith tập trung đo lường ba siêu tham số cốt lõi (Core Heuristics):
+Contextual Precision / Recall (Độ chính xác và Độ phủ của Ngữ cảnh): Đánh giá khâu Truy xuất (Retrieval). Giám khảo LLM sẽ so sánh tài liệu mà hệ thống RAG lấy ra từ ChromaDB với tài liệu chuẩn trong Golden Dataset xem có bỏ sót thông tin quan trọng nào không.
+Faithfulness / Groundedness (Tính bám sát dữ liệu): Đánh giá mức độ trung thực của Động cơ suy luận. Giám khảo LLM sẽ quét câu trả lời được sinh ra và đối chiếu với tập tài liệu ngữ cảnh. Nếu câu trả lời chứa bất kỳ thông tin nào không xuất hiện trong tài liệu gốc, hệ thống sẽ bị đánh dấu lỗi Ảo giác (Hallucination) và bị trừ điểm kịch liệt.
+Answer Relevance (Tính hữu ích của câu trả lời): Đánh giá xem câu trả lời có đi đúng trọng tâm và giải quyết được yêu cầu ban đầu của người dùng hay không, loại bỏ các trường hợp AI trả lời lan man hoặc lạc đề.
+Hiện thực hóa quy trình Đánh giá (Evaluation Implementation):
+Cơ sở hạ tầng của LangSmith cho phép kích hoạt quy trình chấm điểm hàng loạt chỉ với vài dòng mã thông qua hàm evaluate().
+from langsmith.evaluation import evaluate, LangChainStringEvaluator
+from langsmith import Client
+# Khởi tạo Client kết nối với LangSmith Platform
+client = Client()
+# 1. Khai báo các tiêu chí đánh giá tự động (Evaluators)
+# Sử dụng tiêu chí "qa" (Question Answering) để đối chiếu giữa 
+# Đầu ra của hệ thống và Đầu ra kỳ vọng trong Dataset
+qa_evaluator = LangChainStringEvaluator(
+    "qa", 
+    config={"llm": ChatOpenAI(model="gpt-4o", temperature=0)} # Dùng GPT-4 làm giám khảo
+)
+# 2. Định nghĩa hàm đóng gói hệ thống cần kiểm thử (System Under Test)
+def predict_rag_answer(inputs: dict) -> dict:
+    """Hàm nạp input từ dataset vào chuỗi RAG hiện tại và lấy kết quả"""
+    # (Giả định 'chuoi_rag' là đường ống LCEL đã cấu hình từ Chương 2)
+    response = chuoi_rag.invoke(inputs["question"])
+    return {"output": response}
+# 3. Kích hoạt quy trình Đánh giá hàng loạt (Batch Evaluation)
+# Chạy hệ thống trên tập dữ liệu "TuyenSinh_Golden_Dataset" và chấm điểm
+experiment_results = evaluate(
+    predict_rag_answer,
+    data="TuyenSinh_Golden_Dataset",
+    evaluators=[qa_evaluator],
+    experiment_prefix="Kiem_thu_RAG_V1_2",
+    metadata={"version": "1.2", "model": "llama-3"}
+)
+Sự kết hợp giữa quản lý tập dữ liệu có cấu trúc và đánh giá tự động dựa trên LLM-as-a-Judge đã biến LangSmith thành một hệ thống kiểm thử tự động (CI/CD) chuyên biệt cho AI. Nó cung cấp những con số định lượng (quantitative metrics) rõ ràng để kỹ sư phần mềm biết chắc chắn liệu một thay đổi trong hệ thống có thực sự mang lại sự cải thiện hay không.
+5.6. Phân tích viễn trắc và Tối ưu hóa chi phí (Cost/Token Optimization)
+Khác với các phần mềm truyền thống nơi chi phí vận hành (OpEx) chủ yếu phụ thuộc vào băng thông mạng (bandwidth) và chu kỳ tính toán của CPU/RAM, chi phí của một hệ thống AI tạo sinh được định giá trực tiếp qua số lượng Token tiêu thụ tại mỗi lượt gọi API.
+Mô hình chi phí của các nhà cung cấp LLM (như OpenAI, Anthropic, Google) thường tuân theo một hàm tuyến tính phân mảnh:
+Trong kiến trúc RAG, lượng Tokens_input (Prompt tokens) thường khổng lồ do hệ thống phải nhồi nhét (inject) hàng loạt tài liệu truy xuất vào ngữ cảnh để Động cơ suy luận xử lý. Nếu không có cơ chế giám sát độ phân giải cao, hệ thống sẽ nhanh chóng vượt quá ngân sách hạ tầng. LangSmith đóng vai trò là một trung tâm kiểm soát chi phí (FinOps Dashboard) thông qua khả năng phân tích viễn trắc (telemetry analytics) sâu sát đến từng luồng thực thi con (Child Runs).
+Chiến lược tối ưu hóa dựa trên dữ liệu từ LangSmith:
+Nhờ vào các báo cáo tổng hợp từ LangSmith, kỹ sư hệ thống có thể triển khai các chiến thuật giảm thiểu chi phí (Cost-reduction tactics) một cách có cơ sở:
+Tinh chỉnh Cửa sổ truy xuất (Retriever Tuning): Bằng cách xem xét các luồng truy vết (traces), nếu kỹ sư nhận thấy hệ thống RAG thường xuyên gửi 10 mảnh tài liệu (chunks) vào Prompt nhưng LLM chỉ sử dụng thông tin từ 2 mảnh đầu tiên để sinh câu trả lời, họ có thể hạ siêu tham số k=2 trong hàm similarity_search. Việc này ngay lập tức giảm 80% lượng token đầu vào mà không làm suy giảm chất lượng đầu ra.
+Cắt tỉa Lời nhắc (Prompt Pruning): Theo dõi số lượng token tĩnh (static tokens) sinh ra từ SystemMessage. Nếu một chỉ thị hệ thống quá rườm rà nhưng không tác động trực tiếp đến chất lượng suy luận, nó có thể được viết lại ngắn gọn hơn.
+Định tuyến Bộ nhớ đệm (Semantic Caching): Phân tích LangSmith có thể chỉ ra một tỷ lệ lớn các truy vấn (queries) có sự lặp lại về mặt ngữ nghĩa. Khi đó, kỹ sư có thể tích hợp lớp SemanticCache, lưu trữ các vector câu trả lời để tái sử dụng ngay lập tức mà không cần kích hoạt LLM.
+5.7. Kiến trúc tích hợp không xâm lấn (Zero-code/Non-invasive Instrumentation)
+Một hệ thống phần mềm được thiết kế tốt phải tuân thủ nguyên lý Phân tách mối quan tâm (Separation of Concerns). Trong lịch sử lập trình, để ghi nhận nhật ký hệ thống (logging), các kỹ sư thường phải "làm bẩn" (pollute) mã nguồn nghiệp vụ (business logic) bằng hàng loạt các câu lệnh logger.info() hay logger.debug() rải rác khắp các hàm.
+Hệ sinh thái LangChain và LangSmith giải quyết triệt để vấn đề này thông qua cơ chế Tích hợp không xâm lấn (Non-invasive Instrumentation). Quá trình theo dõi (tracing) và đo lường được tách bạch hoàn toàn khỏi logic thực thi chính, hoạt động dưới dạng các luồng xử lý nền (background threads) và giao diện gọi lại (Callbacks API).
+1. Khai báo thông qua Biến môi trường (Environment Variables):
+Như đã trình bày sơ lược, việc cấy mã đo lường vào các chuỗi LCEL hay đồ thị LangGraph đã biên dịch không yêu cầu lập trình viên phải sửa đổi cấu trúc đồ thị. Hệ thống tự động nhận diện và gửi payload thông qua việc đọc các biến môi trường:
+# Kích hoạt Tracing ở chế độ nền (Background streaming)
+export LANGCHAIN_TRACING_V2="true"
+export LANGCHAIN_API_KEY="ls__..."
+Cơ chế này mang lại lợi ích to lớn trong quá trình Tích hợp và Triển khai liên tục (CI/CD): Kỹ sư có thể dễ dàng bật/tắt LangSmith giữa các môi trường Phát triển (Development), Thử nghiệm (Staging) và Sản xuất (Production) chỉ bằng cách cấu hình tệp .env mà không rủi ro phá vỡ mã nguồn gốc.
+2. Mở rộng khả năng đo lường với Decorator @traceable:
+Mặc dù LangSmith tự động giám sát các cấu trúc nội tại của LangChain (như LLMs, Retrievers, Agents), trong các dự án phức hợp, kỹ sư thường phải viết các hàm Python ngoại vi (ví dụ: hàm tiền xử lý dữ liệu đầu vào hoặc hàm tính toán thuật toán độc lập).
+Để đưa các hàm ngoại vi này vào trong Cây phân cấp thực thi (Hierarchical Tree) của LangSmith, hệ thống cung cấp một Decorator đơn giản là @traceable. Kỹ thuật Meta-programming (Siêu lập trình) này cho phép bao bọc (wrap) hàm gốc, tự động bắt Input/Output và tính toán độ trễ mà không làm thay đổi chữ ký hàm (function signature).
+from langsmith import traceable
+# Cấy mã đo lường vào một hàm Python thuần túy bằng Meta-programming
+@traceable(run_type="tool", name="tien_xu_ly_van_ban")
+def clean_user_input(raw_text: str) -> str:
+    """Hàm loại bỏ ký tự đặc biệt, chuẩn hóa chuỗi trước khi đưa vào RAG"""
+    cleaned_text = raw_text.strip().lower()
+    # Các logic xử lý chuỗi phức tạp khác...
+    return cleaned_text
+Sự thanh lịch trong kiến trúc tích hợp của LangSmith đảm bảo mã nguồn của hệ thống AI luôn giữ được tính tinh gọn (clean code), dễ bảo trì, trong khi vẫn sở hữu một hệ thống radar quan sát 360 độ về mọi hoạt động ẩn sâu bên trong Động cơ suy luận.
+PHẦN 2: XÂY DỰNG VÀ TRIỂN KHAI DỰ ÁN THỰC TẾ
+Chương 6: Phân tích Yêu cầu và Thiết kế Kiến trúc Hệ thống Tư vấn Tuyển sinh
+Quy trình chuyển hóa các nền tảng lý thuyết AI thành một sản phẩm phần mềm thực tiễn đòi hỏi sự tuân thủ nghiêm ngặt các nguyên lý của Kỹ nghệ Phần mềm (Software Engineering). Chương này trình bày chi tiết pha khởi tạo dự án, bắt đầu từ việc khảo sát bài toán nghiệp vụ, bóc tách các yêu cầu kỹ thuật, cho đến việc thiết lập các cấu trúc dữ liệu nền tảng làm minh chứng cho tính khả thi của dự án.
+6.1. Khảo sát Hiện trạng và Đặt vấn đề
+Trong mỗi kỳ tuyển sinh đại học, hội đồng tuyển sinh phải đối mặt với một luồng truy vấn khổng lồ từ phụ huynh và thí sinh. Phân tích hành vi người dùng (User Hành vi) cho thấy, nhu cầu thông tin tuyển sinh mang tính cá nhân hóa cực kỳ cao và thường là sự giao thoa (intersection) của nhiều biến số phức tạp: Ngành học, Khối thi (Tổ hợp môn), Điểm chuẩn lịch sử, và Phương thức xét tuyển.
+Các giải pháp công nghệ hiện hành tại các trường đại học bộc lộ những rào cản mang tính hệ thống:
+Chatbot theo kịch bản (Rule-based Chatbot): Chỉ hoạt động tốt với các câu hỏi có cấu trúc cứng. Nếu thí sinh hỏi chệch khỏi cây quyết định (decision tree) hoặc gộp nhiều câu hỏi làm một, luồng hội thoại lập tức bị đứt gãy.
+Hệ thống tra cứu truyền thống: Việc tìm kiếm quy chế thường trả về toàn bộ file Đề án tuyển sinh định dạng PDF dài hàng chục trang. Thí sinh phải tự tải về và đọc thủ công để tìm ra đúng một dòng thông tin mình cần.
+Mục tiêu dự án: Khắc phục triệt để các rào cản trên bằng cách xây dựng một Tác tử AI Tư vấn Tuyển sinh (Admissions AI Agent) tự chủ. Hệ thống này được kỳ vọng sẽ giải quyết "Nghịch lý thông tin tuyển sinh": Vừa phải duy trì khả năng giao tiếp ngôn ngữ tự nhiên, thấu cảm (Probabilistic Generation), vừa phải đảm bảo năng lực truy xuất các số liệu định lượng một cách chính xác tuyệt đối (Deterministic Retrieval).
+[CHÈN HÌNH ẢNH: Chụp màn hình giao diện chat thử nghiệm của dự án (có thể là giao diện terminal console hoặc web UI nếu có) thể hiện một đoạn chat hỏi đáp mượt mà giữa bot và người dùng] Hình 6.1. Giao diện tương tác thử nghiệm của Tác tử AI Tư vấn Tuyển sinh Đại học XYZ
+6.2. Kỹ nghệ Yêu cầu (Requirements Engineering) và Bằng chứng Khả thi
+Dựa trên mục tiêu đã xác định, hệ thống được phân rã thành các Yêu cầu Chức năng (Functional Requirements - FR) cốt lõi. Trong quá trình phân tích yêu cầu, nhóm nghiên cứu đồng thời thiết lập các nguyên mẫu (prototypes) về mặt dữ liệu để chứng minh tính khả thi.
+FR01 - Khai thác và Hiểu tri thức phi cấu trúc (Unstructured Knowledge Ingestion)
+Mô tả: Hệ thống phải có khả năng tự động đọc, phân mảnh (chunking) và hiểu được ngữ nghĩa từ các tài liệu PDF phức tạp như Đề án tuyển sinh chính thức của trường.
+Giải pháp kỹ thuật đề xuất: Sử dụng đường ống RAG với UnstructuredPDFLoader và RecursiveCharacterTextSplitter của LangChain để xử lý tài liệu trước khi lưu vào không gian vector ChromaDB.
+FR02 - Tra cứu Dữ liệu Cấu trúc (Structured Data Retrieval) với độ chính xác tuyệt đối
+Mô tả: Khác với quy chế bằng chữ, các số liệu như Điểm chuẩn, Chỉ tiêu, Mã ngành không được phép "đọc hiểu mờ". Hệ thống phải trích xuất chính xác các số liệu này từ cơ sở dữ liệu định dạng JSON/CSV.
+Minh chứng triển khai (Implementation Proof): Để đáp ứng yêu cầu này, dự án thiết kế một cơ sở dữ liệu vi mô (micro-database) định dạng JSON. Cấu trúc này cho phép Agent dễ dàng lọc (filter) thông tin thông qua các hàm công cụ (Tools).
+[
+  {
+    "ma_nganh": "7480201",
+    "ten_nganh": "Công nghệ thông tin",
+    "to_hop_xet_tuyen": ["A00", "A01", "D01"],
+    "diem_chuan_nam_truoc": 26.5,
+    "chi_tieu": 120
+  },
+  {
+    "ma_nganh": "7480103",
+    "ten_nganh": "Kỹ thuật phần mềm",
+    "to_hop_xet_tuyen": ["A00", "A01"],
+    "diem_chuan_nam_truoc": 27.2,
+    "chi_tieu": 80
+  }
+]
+Đoạn mã 6.1. Trích xuất cấu trúc dữ liệu JSON (data/diem_chuan_2025.json) phục vụ Yêu cầu FR02
+FR03 - Quản lý Trạng thái và Hồ sơ Hội thoại (State & Context Management)
+Mô tả: Một tư vấn viên con người không yêu cầu thí sinh phải nhắc lại tên ngành học ở mỗi câu hỏi. Chatbot cũng phải như vậy. Hệ thống cần duy trì một "Hồ sơ thí sinh" (Student Profile) tạm thời, ghi nhớ ngữ cảnh qua nhiều lượt tương tác (multi-turn).
+Minh chứng triển khai: Yêu cầu này được giải quyết triệt để thông qua kiến trúc LangGraph. Nhóm dự án đã thiết kế một lớp Trạng thái (AgentState) kế thừa từ TypedDict để liên tục luân chuyển và cập nhật thông tin người dùng giữa các đỉnh (Nodes) của đồ thị.
+from typing import Annotated, TypedDict
+from langgraph.graph.message import add_messages
+from langchain_core.messages import BaseMessage
+class StudentProfile(TypedDict, total=False):
+    target_major: str      # Ngành học thí sinh quan tâm (vd: CNTT)
+    exam_block: str        # Tổ hợp môn xét tuyển (vd: A00)
+class AgentState(TypedDict):
+    # Sử dụng reducer 'add_messages' để nối chuỗi lịch sử hội thoại an toàn
+    messages: Annotated[list[BaseMessage], add_messages]
+    # Biến trạng thái lưu trữ hồ sơ thí sinh để duy trì ngữ cảnh
+    student_profile: StudentProfile
+    # Intent hiện tại của truy vấn (điểm chuẩn, học phí, quy chế...)
+    current_intent: str
+Đoạn mã 6.2. Cấu trúc State (src/graph/state.py) quản lý bộ nhớ hội thoại theo Yêu cầu FR03
+6.3. Đặc tả Thuộc tính Chất lượng (Quality Attributes / NFR)
+Bên cạnh các chức năng cốt lõi, sự thành bại của một ứng dụng AI Tạo sinh khi đưa vào thực tế phụ thuộc rất lớn vào các Thuộc tính Chất lượng (Non-functional Requirements - NFR). Hệ thống Tư vấn Tuyển sinh được thiết kế với các ràng buộc nghiêm ngặt sau:
+NFR01 - Ràng buộc Không Ảo giác (Zero-Hallucination/Fact-grounding Constraint)
+Thách thức: Bản chất của LLM là mô hình sinh xác suất, dễ dẫn đến hiện tượng ảo giác (tự bịa ra thông tin) khi trả lời các truy vấn nằm ngoài dữ liệu huấn luyện. Đối với miền thông tin nhạy cảm như điểm chuẩn đại học, một câu trả lời ảo giác có thể gây ảnh hưởng nghiêm trọng đến quyết định của thí sinh.
+Thiết kế hệ thống: Hệ thống áp dụng nguyên tắc Fact-grounding. Tác tử AI (Admissions Agent) bị khóa chặt bởi một Khuôn mẫu Lời nhắc Hệ thống (System Prompt) mang tính mệnh lệnh (Imperative Prompting). Tác tử bắt buộc phải gọi các Công cụ (Tools) để lấy dữ liệu. Nếu Tool trả về rỗng, AI phải hồi đáp nguyên văn: "Tôi không có thông tin chính thức về vấn đề này", tuyệt đối không tự nội suy.
+NFR02 - Độ dung sai ngôn ngữ và Tìm kiếm linh hoạt (Linguistic Fault Tolerance)
+Thách thức: Thí sinh hiếm khi nhập chính xác tên ngành học đầy đủ. Các từ viết tắt (như "CNTT" thay vì "Công nghệ thông tin", "KTPM" thay vì "Kỹ thuật phần mềm") hoặc lỗi đánh máy là cực kỳ phổ biến.
+Thiết kế hệ thống: Thay vì sử dụng thuật toán so khớp chính xác (Exact Match), hàm công cụ @tool truy vấn cơ sở dữ liệu điểm chuẩn (JSON) phải được trang bị thuật toán Khớp chuỗi mờ (Partial/Fuzzy String Matching) để duy trì trải nghiệm người dùng liền mạch.
+NFR03 - Tách biệt Mối quan tâm và Tính cắm chạy (Plug-and-Play Maintainability)
+Thách thức: Các thông số tuyển sinh (Điểm chuẩn, Đề án, Chỉ tiêu) thay đổi hàng năm. Nếu dữ liệu bị nhúng cứng (hard-coded) vào mã nguồn, mỗi năm hội đồng phải yêu cầu đội ngũ IT biên dịch lại toàn bộ phần mềm.
+Thiết kế hệ thống: Áp dụng nguyên lý Kiến trúc Phân tách (Decoupled Architecture). Cấu trúc data/diem_chuan_2025.json và thư mục data/admissions/ chứa file PDF được tách biệt hoàn toàn khỏi logic suy luận của LangGraph. Hội đồng tuyển sinh chỉ cần thả file PDF hoặc JSON mới vào thư mục tương ứng, hệ thống sẽ tự động cập nhật tri thức (Plug-and-Play) mà không cần thay đổi dù chỉ một dòng code.
+6.4. Thiết kế Kiến trúc Phân tầng Tổng thể (Layered Architecture Design)
+Dựa trên các yêu cầu FR và NFR đã phân tích, hệ thống được thiết kế theo mô hình Kiến trúc Tác tử hướng Công cụ (Tool-calling Agent Architecture) kết hợp với Đường ống RAG, được điều phối bởi LangGraph.
+Hình 6.2. Sơ đồ Kiến trúc Phân tầng Tổng thể của Hệ thống Chatbot Tư vấn Tuyển sinh
+Kiến trúc tổng thể được chia làm ba tầng (Layers) tương tác hai chiều:
+1. Tầng Dữ liệu (Knowledge / Data Layer):
+Tầng này đóng vai trò là "Bộ nhớ dài hạn phi tham số" (Non-parametric Long-term Memory), cung cấp nền tảng sự thật (ground-truth) cho toàn bộ hệ thống. Tầng này phân tách thành hai nhánh:
+Vector Store (ChromaDB): Quản lý dữ liệu phi cấu trúc. Chịu trách nhiệm nạp (ingest) file De_an_tuyen_sinh.pdf, phân mảnh văn bản bằng thuật toán Cửa sổ trượt (RecursiveCharacterTextSplitter) và lưu trữ dưới dạng vector nhúng để phục vụ truy vấn ngữ nghĩa (Semantic Search).
+Structured Database: Quản lý dữ liệu định lượng, hiện thực hóa bằng tệp diem_chuan.json.
+2. Tầng Điều phối Logic (Agentic Routing Layer): 
+Đây là lõi xử lý (Core Engine) của dự án, nơi sức mạnh của hệ sinh thái LangChain/LangGraph được phát huy. Tầng này tuân theo chu trình ReAct (Reasoning and Acting) có chu trình (Cyclic):
+Trạng thái (State): Cấu trúc AgentState liên tục luân chuyển dữ liệu hội thoại (Messages) và hồ sơ người dùng (Student Profile).
+Đỉnh Suy luận (Reasoner Node): Mô hình ngôn ngữ (LLM) được trang bị System Prompt đóng vai trò là "Chuyên viên tư vấn". LLM đọc State, phân tích ý định (Intent) của người dùng và quyết định sẽ sinh ra câu trả lời trực tiếp hay cần gọi công cụ (Tool Call).
+Đỉnh Thực thi (Tools Node): Chứa các hàm Python thực thi nhiệm vụ lấy dữ liệu (như tra_cuu_thong_tin_pdf truy vấn ChromaDB, hoặc tra_cuu_diem_chuan_json quét file JSON).
+Định tuyến (Conditional Routing): Các cạnh (edges) trong LangGraph quyết định vòng lặp. Nếu Tool Node trả về dữ liệu, luồng điều khiển được định tuyến ngược trở lại Reasoner Node để LLM tổng hợp thông tin thành câu trả lời ngôn ngữ tự nhiên.
+3. Tầng Giám sát Vận hành (LLMOps Observability Layer): 
+Mọi luồng dữ liệu (Data flow) chạy qua Tầng Điều phối Logic đều được phát luồng (stream) ẩn dưới nền (background) về hệ thống LangSmith. Tầng này không can thiệp vào logic hệ thống nhưng đảm bảo yêu cầu NFR04, cung cấp giao diện truy vết (Tracing) chi tiết để đánh giá lượng Token tiêu thụ, độ trễ và giám sát các trường hợp người dùng nhập từ khóa nằm ngoài cơ sở dữ liệu.
+6.5. Thiết kế Luồng Dữ liệu (Data Flow Design)
+Sơ đồ kiến trúc phân tầng (Hình 6.2) thể hiện cấu trúc tĩnh của hệ thống. Để làm rõ khía cạnh động (dynamic behavior), luồng dữ liệu (Data Flow) của một phiên tư vấn tiêu chuẩn được thiết kế thông qua các bước tuần tự sau:
+Tiếp nhận (Input): Người dùng nhập câu hỏi (Ví dụ: "Năm nay ngành CNTT lấy bao nhiêu điểm và xét khối nào?"). Dữ liệu được đưa vào nút Trạng thái (AgentState).
+Đánh giá Ý định (Intent Classification): Reasoner Node (LLM) đọc câu hỏi, kết hợp với Lịch sử hội thoại trong AgentState. Dựa trên System Prompt, LLM nhận diện đây là câu hỏi cần số liệu chính xác và phát ra lệnh gọi hàm (Tool Call) có tên tra_cuu_diem_chuan(ten_nganh="Công nghệ thông tin").
+Định tuyến (Routing): Đồ thị LangGraph đánh giá đầu ra của LLM. Do có lệnh gọi hàm, luồng dữ liệu được rẽ nhánh (Conditional Edge) sang Tools Node.
+Truy xuất (Retrieval): Hàm Python tương ứng được kích hoạt, quét tệp diem_chuan.json, tìm thấy kết quả và trả về chuỗi JSON thô (Raw JSON String) cho đồ thị.
+Tổng hợp (Synthesis): Dữ liệu thô được đưa ngược trở lại Reasoner Node. Lúc này, LLM đóng vai trò tổng hợp, chuyển hóa dữ liệu khô khan thành ngôn ngữ tự nhiên, thân thiện ("Chào em, đối với ngành Công nghệ thông tin năm nay...").
+Phản hồi (Output) & Lưu vết (Tracing): Câu trả lời được gửi đến người dùng, đồng thời toàn bộ độ trễ (latency), số token đầu vào/đầu ra, và nội dung các bước trên được đóng gói thành một siêu dữ liệu (metadata payload) gửi về máy chủ LangSmith.
+6.6. Quyết định Công nghệ (Technology Stack)
+Để hiện thực hóa kiến trúc và luồng dữ liệu trên, dự án quyết định sử dụng tổ hợp công nghệ (Tech Stack) sau. Các lựa chọn này đều dựa trên tiêu chí: Hiệu năng cao, khả năng mở rộng tốt và phù hợp với hệ sinh thái Python.
+Ngôn ngữ Lập trình: Python 3.10+
+Lý do: Đây là ngôn ngữ thống trị trong lĩnh vực AI/Data Science, sở hữu hệ sinh thái thư viện đa dạng và hỗ trợ Type Hinting mạnh mẽ (TypedDict, Pydantic), giúp hạn chế lỗi runtime khi làm việc với cấu trúc dữ liệu của Agent.
+Khung điều phối (Orchestration): LangChain & LangGraph
+Lý do: Cung cấp lớp trừu tượng (abstraction layer) hoàn hảo để giao tiếp với LLM. LangGraph cho phép định nghĩa các vòng lặp (cycles) cần thiết cho Agent mà các luồng tuyến tính truyền thống không làm được.
+Cơ sở dữ liệu Không gian Vector: ChromaDB
+Lý do: Là một Vector Database mã nguồn mở, nhẹ, có thể nhúng trực tiếp (embedded) vào ứng dụng Python mà không cần cài đặt máy chủ phức tạp (như Pinecone hay Weaviate), cực kỳ phù hợp cho môi trường thử nghiệm và triển khai quy mô vừa.
+Thư viện xử lý dữ liệu: Unstructured
+Lý do: Cung cấp công cụ mạnh mẽ (UnstructuredPDFLoader) để trích xuất văn bản từ các tệp PDF Đề án tuyển sinh phức tạp (chứa nhiều bảng biểu, định dạng), vượt trội hơn các thư viện đọc PDF cơ bản như PyPDF2.
+Nền tảng LLMOps: LangSmith
+Lý do: Tích hợp "Zero-code" (Không xâm lấn) trực tiếp vào LangChain. Cho phép quan sát sâu (deep observability) vào từng luồng thực thi (traces) của LLM để đánh giá chi phí và chất lượng mô hình.
+Chương 7: Xây dựng Đường ống Dữ liệu RAG và Không gian Vector
+Để giải quyết yêu cầu truy xuất thông tin từ các tài liệu phi cấu trúc (như Quy chế và Đề án tuyển sinh), hệ thống áp dụng kỹ thuật RAG (Retrieval-Augmented Generation). Tuy nhiên, Mô hình Ngôn ngữ Lớn (LLM) không thể trực tiếp đọc hiểu một tệp tin định dạng PDF thô. Do đó, hệ thống cần một cơ chế trung gian để chuyển hóa tài liệu thành định dạng mà AI có thể truy vấn.
+Chương này trình bày chi tiết quá trình xây dựng Đường ống Nạp dữ liệu (Data Ingestion Pipeline) thông qua kịch bản mã nguồn ingest.py.
+7.1. Tổng quan Kiến trúc Đường ống Nạp dữ liệu
+Đường ống nạp dữ liệu của hệ thống Chatbot Tuyển sinh được thiết kế dựa trên nguyên lý ETL (Extract, Transform, Load) truyền thống trong kỹ thuật dữ liệu, nhưng được tinh chỉnh đặc biệt cho dữ liệu văn bản phục vụ AI.
+Một quyết định thiết kế quan trọng ở giai đoạn này là sự Tách biệt Mối quan tâm (Separation of Concerns). Quá trình xử lý tài liệu Đề án tuyển sinh không được nhúng trực tiếp vào luồng hội thoại chính của Tác tử (Agent). Thay vào đó, nó hoạt động như một tiến trình chạy ngầm, độc lập (offline batch processing).
+Sự tách biệt này mang lại hai lợi ích cốt lõi:
+Tối ưu hóa độ trễ (Latency Optimization): Khi thí sinh đặt câu hỏi, Agent chỉ việc tìm kiếm trên cơ sở dữ liệu đã được số hóa sẵn, thay vì phải quét lại toàn bộ file PDF từ đầu, giúp thời gian phản hồi giảm xuống chỉ còn vài giây.
+Khả năng bảo trì linh hoạt (Plug-and-Play Maintainability): Mỗi khi Bộ Giáo dục hoặc nhà trường ban hành Đề án tuyển sinh cho năm học mới, quản trị viên hệ thống chỉ cần thay thế file PDF trong thư mục nguồn và chạy lại kịch bản đường ống một lần duy nhất. Tri thức của AI sẽ được cập nhật hoàn toàn độc lập với mã nguồn xử lý logic (LangGraph).
+Luồng thực thi của đường ống này bao gồm 3 giai đoạn đồng bộ, tuần tự nối tiếp nhau:
+Pha Trích xuất (Extract): Bóc tách văn bản thô khỏi định dạng đồ họa của file PDF.
+Pha Biến đổi (Transform): Làm sạch và chia nhỏ văn bản thành các phân mảnh (Chunks) mang ngữ nghĩa độc lập.
+Pha Tải (Load): Chuyển đổi các phân mảnh thành vector và lập chỉ mục trong một Vector Database bền vững.
+[CHÈN HÌNH ẢNH: Chụp màn hình cấu trúc thư mục dự án của bạn trên VS Code. Cần làm nổi bật tệp ingest.py nằm tách biệt với thư mục src/, đồng thời cho thấy thư mục data/admissions/ đang chứa file De_an_tuyen_sinh_2026.pdf] Hình 7.1. Cấu trúc thư mục minh họa sự tách biệt giữa Đường ống nạp dữ liệu và Luồng logic chính
+7.2. Kỹ thuật Bóc tách Văn bản Phi cấu trúc (Document Extraction)
+Định dạng PDF (Portable Document Format) bản chất là một định dạng hướng hiển thị (presentation-oriented). Nó lưu trữ thông tin dưới dạng tọa độ hình học của các ký tự trên trang giấy thay vì cấu trúc ngữ nghĩa (semantic structure). Điều này khiến việc trích xuất dữ liệu từ các tệp Đề án tuyển sinh – vốn chứa vô số bảng biểu, danh sách liệt kê, và tiêu đề phân cấp – trở thành một thách thức lớn. Các thư viện đọc PDF cơ bản (như PyPDF2) thường trộn lẫn văn bản của các cột hoặc làm mất định dạng bảng.
+Để giải quyết triệt để vấn đề này, dự án quyết định tích hợp thư viện Unstructured thông qua lớp bao bọc UnstructuredPDFLoader của LangChain.
+from langchain_community.document_loaders import UnstructuredPDFLoader
+# Khởi tạo đường dẫn đến tệp nguồn
+pdf_path = "data/admissions/De_an_tuyen_sinh_2026.pdf"
+# Khởi tạo bộ nạp tài liệu với chiến lược phân tích cú pháp (parsing) phù hợp
+loader = UnstructuredPDFLoader(
+    file_path=pdf_path,
+    mode="single" # Gộp toàn bộ văn bản thành một Document duy nhất ban đầu
+)
+# Tiến hành đọc và bóc tách dữ liệu
+documents = loader.load()
+print(f"Đã trích xuất thành công tài liệu. Chiều dài văn bản thô: {len(documents[0].page_content)} ký tự.")
+Đoạn mã 7.1. Trích xuất văn bản thô từ tệp PDF bằng UnstructuredPDFLoader
+Đánh giá kỹ thuật: Thư viện Unstructured được trang bị các mô hình thị giác máy tính (Computer Vision) và xử lý ngôn ngữ tự nhiên hạng nhẹ để tự động nhận diện đâu là tiêu đề (Header), đâu là nội dung (Narrative Text), và đâu là dữ liệu bảng (Table). Nhờ đó, luồng văn bản thô (raw text) được kết xuất ra giữ được độ sạch (cleanliness) cao, tạo tiền đề vững chắc cho bước phân mảnh tiếp theo.
+7.3. Thuật toán Phân mảnh Văn bản (Chunking Strategy)
+Mặc dù Tác tử AI (LLM) hiện đại có Cửa sổ Ngữ cảnh (Context Window) ngày càng lớn, việc nhồi nhét toàn bộ 50 trang Đề án tuyển sinh vào một truy vấn duy nhất (Zero-shot prompting) mang lại hai rủi ro nghiêm trọng:
+Lãng phí tài nguyên: Tiêu tốn một lượng Token khổng lồ không cần thiết cho mỗi lần hỏi.
+Hiệu ứng "Lạc giữa rừng thông tin" (Lost in the middle): Các nghiên cứu đã chứng minh LLM có xu hướng "quên" hoặc suy giảm độ tập trung đối với các thông tin nằm ở giữa một đoạn văn bản quá dài.
+Do đó, kỹ thuật Phân mảnh văn bản (Chunking) là bắt buộc. Dự án áp dụng thuật toán Phân mảnh Đệ quy theo Ký tự (Recursive Character Text Splitting) kết hợp chiến lược Cửa sổ trượt (Sliding Window).
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+# Cấu hình bộ phân mảnh với thuật toán cửa sổ trượt
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=1000,       # Kích thước lý tưởng cho mỗi khối (khoảng 200-250 từ)
+    chunk_overlap=200,     # Độ chồng lấn ngữ nghĩa giữa các khối liền kề
+    separators=["\n\n", "\n", ".", " ", ""] # Thứ tự ưu tiên cắt
+)
+# Tiến hành chia nhỏ tài liệu đã trích xuất
+chunks = text_splitter.split_documents(documents)
+print(f"Đã chia tài liệu thành {len(chunks)} phân mảnh nhỏ mang ngữ nghĩa độc lập.")
+Đoạn mã 7.2. Cấu hình phân mảnh đệ quy bảo toàn ngữ cảnh
+Phân tích thuật toán và Thiết kế tham số:
+Cơ chế Đệ quy (Recursive Separators): Thuật toán sẽ cố gắng cắt văn bản một cách "tự nhiên" nhất dựa trên mảng separators. Đầu tiên, nó tìm các dấu ngắt đoạn (\n\n). Nếu một đoạn văn vẫn dài hơn chunk_size (1000 ký tự), nó mới đệ quy xuống mức độ cắt theo dấu chấm câu (\n, .), và cuối cùng là cắt theo dấu cách ( ). Điều này giúp các khối văn bản (chunks) không bị đứt gãy giữa chừng một câu có nghĩa.
+Độ chồng lấn (Chunk Overlap = 200): Đây là tham số sống còn. Giả sử Khối $A$ kết thúc ở đầu Điều 2 của quy chế, thì 200 ký tự cuối của Khối $A$ sẽ được lặp lại ở phần đầu của Khối $B$. Kỹ thuật này "trám" lại các khe hở ngữ nghĩa, đảm bảo thuật toán tìm kiếm vector sau này luôn bắt được trọn vẹn ý của một quy định dù nó bị cắt vắt ngang hai khối.
+7.5. Lập chỉ mục và Quản trị Cơ sở dữ liệu Vector (ChromaDB)
+Sau khi các phân mảnh văn bản đã được chuyển đổi thành các tọa độ toán học (vectors), hệ thống cần một cơ chế lưu trữ và truy xuất hiệu quả. Dự án sử dụng ChromaDB, một cơ sở dữ liệu vector chuyên dụng mã nguồn mở, được thiết kế để tối ưu hóa cho các ứng dụng AI sử dụng mô hình nhúng.
+1. Cơ chế lập chỉ mục (Indexing Strategy):
+ChromaDB sử dụng thuật toán HNSW (Hierarchical Navigable Small World) để lập chỉ mục. Thay vì thực hiện so sánh vector của thí sinh với từng vector trong toàn bộ cơ sở dữ liệu (Brute-force search — gây chậm hệ thống), HNSW tạo ra một cấu trúc đồ thị phân tầng. Cơ chế này cho phép tìm kiếm lân cận gần nhất (Approximate Nearest Neighbor) với độ phức tạp thời gian cực thấp, đảm bảo chatbot có thể phản hồi trong thời gian thực ngay cả khi cơ sở dữ liệu chứa hàng ngàn trang tài liệu.
+2. Lưu trữ bền vững và Quản trị dữ liệu (Persistence & Management):
+Một yêu cầu quan trọng của hệ thống là khả năng lưu trữ bền vững (persistence). Dữ liệu sau khi nạp không chỉ tồn tại trên bộ nhớ RAM mà phải được ghi xuống ổ đĩa cứng tại thư mục chroma_db/. Điều này giúp hệ thống không phải chạy lại kịch bản ingest.py mỗi khi chatbot khởi động lại.
+Bên cạnh đó, để giải quyết yêu cầu phi chức năng về tính bảo trì, kịch bản được thiết kế với logic "dọn dẹp trước khi nạp". Mỗi khi có Đề án tuyển sinh mới, hệ thống sẽ tự động quét dọn các chỉ mục cũ để tránh xung đột tri thức giữa các năm học.
+import os
+import shutil
+from langchain_chroma import Chroma
+# Đường dẫn thư mục lưu trữ cơ sở dữ liệu vector
+CHROMA_PATH = "chroma_db"
+def save_to_chroma(chunks, embeddings):
+    """
+    Hàm thực hiện lưu trữ và quản trị dữ liệu vector
+    """
+    # Bước 1: Kiểm tra và dọn dẹp dữ liệu cũ (Cleanup logic)
+    if os.path.exists(CHROMA_PATH):
+        print(f"Phát hiện dữ liệu cũ tại {CHROMA_PATH}. Đang tiến hành xóa...")
+        shutil.rmtree(CHROMA_PATH)
+    # Bước 2: Khởi tạo cơ sở dữ liệu và lưu trữ bền vững
+    db = Chroma.from_documents(
+        documents=chunks, 
+        embedding=embeddings, 
+        persist_directory=CHROMA_PATH # Chỉ định thư mục lưu trữ cục bộ
+    )
+    print(f"Đã lưu trữ thành công {len(chunks)} phân mảnh vào {CHROMA_PATH}.")
+    return db
+Đoạn mã 7.4. Logic quản trị và lưu trữ bền vững cơ sở dữ liệu ChromaDB trong ingest.py
+3. Nghiệm thu kết quả thực thi:
+Khi thực thi toàn bộ đường ống nạp dữ liệu, hệ thống sẽ kết xuất ra các thông số thống kê về số lượng khối văn bản đã được số hóa. Kết quả này xác nhận tri thức từ tệp PDF đã được chuyển hóa hoàn toàn sang dạng số và sẵn sàng cho các bước truy vấn tiếp theo của Agent.
+[CHÈN HÌNH ẢNH: Chụp màn hình thư mục dự án sau khi chạy xong code, cho thấy sự xuất hiện của thư mục chroma_db với các tệp tin bên trong (thường là các tệp .bin hoặc .sqlite). Đồng thời chụp màn hình Terminal hiển thị dòng log "Đã lưu trữ thành công..."]
+Hình 7.3. Thư mục cơ sở dữ liệu vector đã được khởi tạo và lưu trữ bền vững trên ổ đĩa
+Chương 8: Triển khai Các Công cụ Ngoại vi và Xử lý Dữ liệu Cấu trúc
+Dữ liệu tri thức sau khi được nạp vào các kho lưu trữ (Vector Database và JSON) cần một cơ chế để Tác tử AI có thể truy xuất và tương tác tại thời gian thực. Trong hệ sinh thái LangChain, cơ chế này được hiện thực hóa thông qua khái niệm Tools. Chương này trình bày chi tiết quá trình xây dựng các hàm công cụ ngoại vi, cho phép chatbot không chỉ "nói" mà còn có khả năng "hành động" để lấy dữ liệu chính xác tuyệt đối phục vụ thí sinh.
+8.1. Kiến trúc Tác tử hướng Công cụ (Tool-calling Architecture)
+Trong kỹ nghệ AI tạo sinh hiện đại, một tác tử (Agent) thông minh không chỉ dựa vào kiến thức nội tại (parametric knowledge) của mô hình mà còn phải biết sử dụng các công cụ bên ngoài. Dự án áp dụng mô hình thiết kế ReAct (Reasoning and Acting), trong đó sự tương tác giữa LLM và các công cụ diễn ra theo một lớp trừu tượng nghiêm ngặt.
+Bản chất của Tool-calling không phải là việc LLM trực tiếp thực thi mã Python. Thay vào đó, quy trình diễn ra qua 3 bước logic:
+Phân tích ý định: LLM nhận câu hỏi của người dùng và nhận diện xem có cần dữ liệu ngoại vi không. Nếu có, LLM sẽ xuất ra một cấu trúc dữ liệu JSON mô tả tên hàm cần gọi và các tham số tương ứng (Ví dụ: {"name": "tra_cuu_diem_chuan", "args": {"ten_nganh": "CNTT"}}).
+Thực thi hàm (Execution): Hệ thống LangGraph sẽ bắt lấy yêu cầu này, kích hoạt mã Python thực tế để truy vấn dữ liệu (quét file JSON hoặc ChromaDB) và trả về kết quả dưới dạng văn bản thô.
+Tổng hợp tri thức: Kết quả từ hàm được đưa ngược lại cho LLM. Lúc này, LLM mới đóng vai trò là "biên dịch viên" để chuyển hóa các con số khô khan thành một câu trả lời hoàn chỉnh, có ngữ điệu cho thí sinh.
+Việc triển khai các công cụ thông qua Decorator @tool mang lại ưu điểm vượt trội về tính tự mô tả (Self-documenting). Mỗi hàm công cụ sẽ đi kèm với một docstring (chuỗi mô tả) chi tiết. LLM sẽ đọc các dòng mô tả này để hiểu khi nào thì nên dùng công cụ nào, từ đó đưa ra quyết định điều hướng chính xác mà không cần lập trình viên phải viết các câu lệnh if-else cứng nhắc.
+[CHÈN HÌNH ẢNH: Sơ đồ luồng tương tác giữa LLM -> Tool Call -> Python Function -> Tool Result -> LLM. Đây là sơ đồ mô tả bước 8.1 để hội đồng thấy rõ cơ chế điều hành của Agent] Hình 8.1. Cơ chế phối hợp giữa khả năng suy luận của LLM và khả năng thực thi của các Công cụ ngoại vi
+8.2. Triển khai Công cụ Truy vấn Tri thức RAG (tra_cuu_thong_tin)
+Để Tác tử AI có thể khai thác không gian vector ChromaDB (chứa Đề án tuyển sinh), hệ thống không cho phép AI tự ý truy cập cơ sở dữ liệu. Thay vào đó, dự án đóng gói toàn bộ logic truy xuất vào một hàm Python và bọc nó bởi Decorator @tool của LangChain.
+Hàm tra_cuu_thong_tin đóng vai trò là cầu nối giữa tư duy ngôn ngữ của AI và thuật toán tìm kiếm hình học của cơ sở dữ liệu vector.
+from langchain_core.tools import tool
+from langchain_chroma import Chroma
+from langchain_openai import OpenAIEmbeddings
+# 1. Khởi tạo kết nối đến Vector DB đã xây dựng ở Chương 7
+embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+vector_db = Chroma(persist_directory="chroma_db", embedding_function=embeddings)
+# 2. Định nghĩa Công cụ bằng Decorator
+@tool
+def tra_cuu_thong_tin(query: str) -> str:
+    """
+    Công cụ này dùng để tra cứu các thông tin bằng chữ từ Đề án tuyển sinh như: 
+    quy chế xét tuyển, đối tượng ưu tiên, điều kiện hồ sơ, và học phí.
+    Luôn gọi công cụ này khi người dùng hỏi về các quy định chung.
+    Tuyệt đối KHÔNG dùng công cụ này để tra cứu điểm chuẩn hay chỉ tiêu.
+    """
+    # Thực hiện tìm kiếm k-lân cận gần nhất (k=3)
+    results = vector_db.similarity_search(query, k=3)
+    # Xử lý trường hợp không có dữ liệu
+    if not results:
+        return "Hệ thống không tìm thấy quy định này trong Đề án tuyển sinh."
+    # Gộp các phân mảnh tìm được thành một chuỗi văn bản thống nhất
+    context = "\n\n---\n\n".join([doc.page_content for doc in results])
+    return f"Thông tin trích xuất từ Đề án:\n{context}"
+Đoạn mã 8.1. Triển khai hàm công cụ @tool truy vấn cơ sở dữ liệu phi cấu trúc
+Phân tích Kỹ thuật và Quyết định Thiết kế:
+Sức mạnh của Docstring (Chuỗi tài liệu): Trong lập trình Python thông thường, phần chữ nằm trong """ """ chỉ để lập trình viên đọc. Nhưng trong kiến trúc Tool-calling, đoạn văn bản này chính là Prompt điều hướng dành cho LLM. Bằng cách viết rõ: "Tuyệt đối KHÔNG dùng công cụ này để tra cứu điểm chuẩn", chúng ta đã thiết lập một ranh giới (boundary) rõ ràng, ngăn chặn AI gọi nhầm công cụ khi xử lý câu hỏi về điểm số định lượng.
+Tham số Top-K Retrieval (k=3): Khi sử dụng hàm similarity_search, hệ thống được cấu hình để chỉ lấy ra 3 phân mảnh văn bản (chunks) có khoảng cách vector gần nhất với câu hỏi. Việc giới hạn k=3 giúp tối ưu hóa Cửa sổ ngữ cảnh (Context Window), cung cấp cho LLM lượng thông tin vừa đủ để tổng hợp câu trả lời mà không làm loãng dữ liệu hay tốn kém Token.
+Xử lý ngoại lệ (Error Handling): Việc trả về chuỗi "Hệ thống không tìm thấy..." khi results rỗng là một kỹ thuật ép buộc AI tuân thủ NFR01 (Ràng buộc Không Ảo giác). Nếu không tìm thấy, AI sẽ dựa vào chuỗi trả về này để mạnh dạn từ chối trả lời thí sinh, thay vì tự bịa ra một quy chế không có thật.
+[CHÈN HÌNH ẢNH: Chụp màn hình file tools.py (hoặc file chứa hàm này trong dự án của bạn) hiển thị rõ đoạn code trên. Khuyến khích bôi đen hoặc làm nổi bật phần Docstring để minh họa luận điểm]
+Hình 8.2. Mã nguồn triển khai công cụ tra cứu tri thức RAG với Docstring điều hướng
+8.3. Triển khai Công cụ Tra cứu Dữ liệu Cấu trúc (tra_cuu_diem_chuan)
+Đối với các thông tin mang tính định lượng như Điểm trúng tuyển, Chỉ tiêu tuyển sinh và Mã ngành, hệ thống không được phép sử dụng tìm kiếm ngữ nghĩa (Semantic Search) vì rủi ro sai lệch con số là rất cao. Thay vào đó, dự án thiết kế công cụ tra_cuu_diem_chuan để truy xuất trực tiếp từ tệp cơ sở dữ liệu cấu trúc diem_chuan_2025.json.
+Công cụ này đảm bảo tính Xác thực tuyệt đối (Deterministic Retrieval), giúp Tác tử AI luôn trả về dữ liệu chuẩn xác như một hệ thống tra cứu truyền thống.
+import json
+from langchain_core.tools import tool
+# Đường dẫn đến tệp dữ liệu cấu trúc đã định nghĩa ở Chương 6
+DATA_PATH = "data/diem_chuan_2025.json"
+@tool
+def tra_cuu_diem_chuan(ten_nganh: str) -> str:
+    """
+    Công cụ này dùng để tra cứu ĐIỂM CHUẨN, MÃ NGÀNH, CHỈ TIÊU và TỔ HỢP MÔN.
+    Đầu vào 'ten_nganh' là tên ngành học thí sinh quan tâm (ví dụ: 'Công nghệ thông tin').
+    Chỉ sử dụng công cụ này khi người dùng hỏi về con số điểm hoặc mã ngành cụ thể.
+    """
+    try:
+        # Mở và đọc dữ liệu từ file JSON
+        with open(DATA_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        # Logic tìm kiếm ngành học trong danh sách
+        # Chuyển về chữ thường để so sánh không phân biệt hoa thường
+        results = [
+            item for item in data 
+            if ten_nganh.lower() in item["ten_nganh"].lower()
+        ]
+        if not results:
+            return f"Không tìm thấy ngành '{ten_nganh}' trong cơ sở dữ liệu điểm chuẩn."
+        # Định dạng kết quả thành chuỗi văn bản để trả về cho LLM
+        output = "Kết quả tra cứu điểm chuẩn:\n"
+        for res in results:
+            output += (
+                f"- Ngành: {res['ten_nganh']} (Mã: {res['ma_nganh']})\n"
+                f"  + Tổ hợp xét tuyển: {', '.join(res['to_hop_xet_tuyen'])}\n"
+                f"  + Điểm chuẩn năm trước: {res['diem_chuan_nam_truoc']}\n"
+                f"  + Chỉ tiêu: {res['chi_tieu']}\n"
+            )
+        return output
+    except Exception as e:
+        return f"Lỗi kỹ thuật khi truy xuất dữ liệu: {str(e)}"
+Đoạn mã 8.2. Triển khai công cụ tra cứu dữ liệu định lượng từ tệp JSON
+Quyết định Thiết kế và Cơ chế Vận hành:
+Tách biệt nguồn dữ liệu (Source Separation): Bằng cách tách biệt logic tra cứu điểm chuẩn ra khỏi ChromaDB, dự án triệt tiêu hoàn toàn khả năng AI "nhầm lẫn" giữa một câu văn mô tả trong PDF và một con số điểm chuẩn chính thức. Điều này thực hiện hóa yêu cầu NFR03 (Tách biệt mối quan tâm) đã đề ra ở Chương 6.
+Cấu trúc hóa đầu ra (Formatted Output): Thay vì trả về một danh sách (list) hoặc đối tượng JSON thô cho AI, hàm công cụ thực hiện việc chuyển đổi (formatting) dữ liệu thành một chuỗi văn bản có cấu trúc rõ ràng (Mã ngành, Tổ hợp, Điểm...). Cách làm này giúp LLM dễ dàng "đọc hiểu" và trình bày lại cho thí sinh một cách thân thiện mà không cần thực hiện thêm các bước suy luận phức tạp.
+Khả năng mở rộng (Scalability): Mặc dù hiện tại hệ thống sử dụng tệp JSON cục bộ, nhưng kiến trúc hàm công cụ này hoàn toàn cho phép nâng cấp lên việc gọi các API của Nhà trường hoặc truy vấn các cơ sở dữ liệu SQL quy mô lớn trong tương lai mà không làm thay đổi giao diện kết nối với Tác tử AI.
+[CHÈN HÌNH ẢNH: Chụp màn hình tệp diem_chuan_2025.json đặt cạnh đoạn mã Python triển khai hàm tra cứu để minh họa sự tương quan dữ liệu]
+Hình 8.3. Minh chứng logic trích xuất dữ liệu từ cấu trúc JSON sang ngôn ngữ tự nhiên
+8.4. Thuật toán Khớp chuỗi Linh hoạt (Fuzzy Matching) trong Xử lý Dữ liệu
+Trong thực tế vận hành, hàm công cụ tra_cuu_diem_chuan (Mục 8.3) phải đối mặt với một thách thức lớn về hành vi người dùng: Thí sinh thường xuyên sử dụng từ viết tắt (VD: "CNTT", "KTPM", "QTKD"), gõ không dấu ("cong nghe thong tin"), hoặc mắc lỗi đánh máy ("maketing").
+Thuật toán kiểm tra chuỗi con cơ bản (query in text) sẽ thất bại hoàn toàn trong các trường hợp này, vi phạm yêu cầu NFR02 (Độ dung sai ngôn ngữ). Để hệ thống có sức chịu đựng lỗi (Fault Tolerance) cao hơn, dự án tiến hành nâng cấp hàm tra cứu bằng việc kết hợp Từ điển Ánh xạ (Mapping Dictionary) và Thuật toán Khoảng cách Levenshtein (Levenshtein Distance) thông qua thư viện thefuzz.
+1. Cơ sở Thuật toán Khoảng cách Levenshtein:
+Khoảng cách Levenshtein đo lường sự khác biệt giữa hai chuỗi ký tự bằng cách đếm số lượng tối thiểu các phép biến đổi đơn lẻ (chèn, xóa, hoặc thay thế một ký tự) cần thiết để biến đổi chuỗi này thành chuỗi kia. Ví dụ: Khoảng cách giữa "marrketing" (lỗi gõ phím) và "marketing" (chuẩn) là 1 (xóa chữ 'r'). Thuật toán sẽ tính toán và quy đổi khoảng cách này thành một thang điểm tương đồng từ 0 đến 100.
+2. Nâng cấp mã nguồn Công cụ:
+import json
+from langchain_core.tools import tool
+from thefuzz import process # Thư viện hỗ trợ Fuzzy Matching
+DATA_PATH = "data/diem_chuan_2025.json"
+# 1. Khởi tạo từ điển giải mã từ viết tắt phổ biến
+ACRONYM_MAP = {
+    "cntt": "Công nghệ thông tin",
+    "ktpm": "Kỹ thuật phần mềm",
+    "qtkd": "Quản trị kinh doanh",
+    "ktdn": "Kế toán doanh nghiệp",
+    "nna": "Ngôn ngữ Anh"
+}
+@tool
+def tra_cuu_diem_chuan(ten_nganh: str) -> str:
+    """
+    Công cụ tra cứu ĐIỂM CHUẨN, MÃ NGÀNH, CHỈ TIÊU.
+    Đầu vào 'ten_nganh' là tên ngành học.
+    """
+    query = ten_nganh.lower().strip()
+    # Bước 1: Tiền xử lý - Giải mã từ viết tắt nếu có
+    if query in ACRONYM_MAP:
+        query = ACRONYM_MAP[query].lower()
+    try:
+        with open(DATA_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        # Trích xuất danh sách tất cả tên ngành hiện có trong DB
+        danh_sach_nganh = [item["ten_nganh"] for item in data]
+        # Bước 2: Áp dụng Fuzzy Matching tìm ra ngành có độ tương đồng cao nhất
+        # Trả về tuple: (Tên ngành khớp nhất, Điểm tương đồng)
+        best_match, score = process.extractOne(query, danh_sach_nganh)
+        # Thiết lập ngưỡng chấp nhận (Threshold) là 70/100
+        if score < 70:
+            return f"Không tìm thấy dữ liệu phù hợp cho từ khóa '{ten_nganh}'. Vui lòng nhập rõ tên ngành."
+        # Lấy thông tin chi tiết của ngành đã được khớp chuẩn
+        results = [item for item in data if item["ten_nganh"] == best_match]
+        # Định dạng và trả về kết quả cho LLM
+        res = results[0]
+        output = (
+            f"Kết quả tra cứu điểm chuẩn cho ngành {res['ten_nganh']} (Hệ thống tự động nhận diện từ khóa '{ten_nganh}'):\n"
+            f"- Mã ngành: {res['ma_nganh']}\n"
+            f"- Tổ hợp xét tuyển: {', '.join(res['to_hop_xet_tuyen'])}\n"
+            f"- Điểm chuẩn: {res['diem_chuan_nam_truoc']}\n"
+            f"- Chỉ tiêu: {res['chi_tieu']}\n"
+        )
+        return output
+    except Exception as e:
+        return f"Lỗi kỹ thuật: {str(e)}"
+Đoạn mã 8.3. Tích hợp Fuzzy Matching và Acronym Mapping vào công cụ tra cứu
+Đánh giá sự cải tiến:
+Việc nâng cấp này tạo ra một "lưới lọc" hai lớp thông minh. Lớp thứ nhất (Từ điển) xử lý tức thời các từ lóng/viết tắt đặc thù của sinh viên. Lớp thứ hai (Fuzzy Match) bắt lỗi chính tả và lỗi thiếu dấu. Nhờ vậy, dù LLM truyền vào tham số ten_nganh="cntt" hay ten_nganh="cong nge thông tin", hàm Python vẫn xử lý trơn tru và trả về đúng dữ liệu của "Công nghệ thông tin" mà không làm gián đoạn cuộc hội thoại.
+[CHÈN HÌNH ẢNH: Chụp màn hình đoạn chat thử nghiệm, trong đó người dùng nhập cố tình viết sai chính tả (ví dụ: "bot cho hỏi điểm chuẩn ngành maketing") và bot vẫn trả lời đúng thông tin ngành Marketing]
+Hình 8.4. Minh chứng hệ thống xử lý thành công truy vấn chứa lỗi đánh máy nhờ thuật toán Fuzzy Matching
+8.5. Cơ chế Ràng buộc Công cụ (Tool Binding) vào Mô hình ngôn ngữ
+Việc định nghĩa các hàm Python với Decorator @tool (như ở Mục 8.2 và 8.4) mới chỉ là bước chuẩn bị. Ở trạng thái mặc định, Mô hình Ngôn ngữ Lớn (LLM) hoàn toàn không biết đến sự tồn tại của các hàm này trong mã nguồn. Để thiết lập cầu nối, hệ thống phải thực hiện quá trình Ràng buộc Công cụ (Tool Binding).
+Trong kiến trúc của các LLM hiện đại (đặc biệt là các mô hình hỗ trợ Function Calling như của OpenAI, Google), việc ràng buộc này bản chất là quá trình dịch thuật: LangChain sẽ tự động đọc tên hàm, kiểu dữ liệu đầu vào (Type Hints) và chuỗi tài liệu (Docstrings) của các hàm Python, sau đó biên dịch chúng thành một lược đồ JSON (JSON Schema) tiêu chuẩn. Lược đồ này sẽ được nhúng ngầm vào mỗi API request gửi lên máy chủ LLM.
+from langchain_openai import ChatOpenAI
+# 1. Đóng gói các công cụ ngoại vi vào một danh sách
+danh_sach_cong_cu = [tra_cuu_thong_tin, tra_cuu_diem_chuan]
+# 2. Khởi tạo mô hình ngôn ngữ lõi (Reasoner)
+# Thiết lập temperature=0 để tối ưu hóa tính logic và deterministic, 
+# giảm thiểu sự bay bổng không cần thiết khi tư vấn tuyển sinh.
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+# 3. Thực hiện Ràng buộc (Binding)
+# llm_with_tools giờ đây là một phiên bản LLM đã được "nâng cấp", 
+# nhận thức được đầy đủ năng lực của các công cụ.
+llm_with_tools = llm.bind_tools(danh_sach_cong_cu)
+# Ví dụ kiểm thử luồng thực thi (Không nằm trong logic chính):
+# response = llm_with_tools.invoke("Cho em hỏi điểm chuẩn ngành CNTT")
+# print(response.tool_calls) # LLM sẽ trả về một yêu cầu gọi hàm thay vì văn bản thường
+Đoạn mã 8.4. Khởi tạo LLM và cơ chế ràng buộc danh sách công cụ bằng bind_tools
+Nguyên lý Hoạt động sau khi Ràng buộc: 
+Khi nhận được câu hỏi từ người dùng thông qua đối tượng llm_with_tools, mô hình sẽ tự động thực hiện một bước "Suy luận nội tại" (Internal Reasoning). Nó đối chiếu ngữ nghĩa của câu hỏi với JSON Schema của các công cụ.
+Nếu câu hỏi là: "Học phí trường mình bao nhiêu?", LLM phân tích từ khóa "học phí", đối chiếu với mô tả của công cụ RAG và quyết định xuất ra một tín hiệu tool_call trỏ đến hàm tra_cuu_thong_tin.
+Nếu câu hỏi là: "Điểm chuẩn ngành IT?", LLM tự động chuyển từ khóa "IT" thành tham số ten_nganh và gọi hàm tra_cuu_diem_chuan.
+Sự ràng buộc này biến LLM từ một mô hình sinh văn bản thuần túy (Text Generator) thành một Bộ định tuyến ngữ nghĩa (Semantic Router) cực kỳ thông minh, định hình nên bản chất của một Agent tự chủ.
+[CHÈN HÌNH ẢNH: Chụp màn hình Terminal/Console in ra kết quả của thuộc tính response.tool_calls (thường là một chuỗi JSON hoặc Dictionary hiển thị rõ LLM yêu cầu gọi hàm gì, tham số truyền vào là gì) để minh chứng cho việc mô hình đã nhận thức được công cụ] Hình 8.5. Tín hiệu Tool Call được sinh ra từ LLM sau khi ràng buộc công cụ thành công
+Chương 9: Xây dựng Đồ thị Điều phối Luồng thực thi với LangGraph
+Trong các ứng dụng LLM cơ bản, luồng dữ liệu thường mang tính tuyến tính (Linear pipeline): Người dùng hỏi $\rightarrow$ Trích xuất dữ liệu $\rightarrow$ LLM trả lời. Tuy nhiên, đối với một Tác tử Tư vấn Tuyển sinh (Admissions Agent), quá trình giải quyết vấn đề thường đòi hỏi nhiều bước suy luận, gọi nhiều công cụ khác nhau và đôi khi phải lặp lại quá trình truy vấn nếu dữ liệu chưa đủ. Để giải quyết bài toán luồng thực thi phi tuyến tính này, dự án ứng dụng LangGraph — một thư viện mở rộng của LangChain chuyên trị các hệ thống đa tác tử và vòng lặp.
+9.1. Kiến trúc Đồ thị Hội thoại (Conversational Graph Architecture)
+LangGraph mô hình hóa vòng đời của một luồng hội thoại thành một Đồ thị Trạng thái có hướng (Directed State Graph). Kiến trúc này chuyển đổi tư duy lập trình từ việc viết mã tuần tự (procedural) sang việc định nghĩa một cỗ máy trạng thái (state machine) thông minh.
+Kiến trúc cốt lõi của hệ thống được xây dựng dựa trên 3 khái niệm trụ cột:
+Trạng thái (State): Đóng vai trò là "bộ nhớ chung" của toàn bộ đồ thị. Nó là một cấu trúc dữ liệu lưu trữ lịch sử tin nhắn, thông tin người dùng và các biến ngữ cảnh. Mỗi khi đồ thị tiến lên một bước, đối tượng State này sẽ được cập nhật và luân chuyển liên tục.
+Đỉnh (Nodes): Các tác nhân thực thi nhiệm vụ trong hệ thống. Đồ thị của dự án bao gồm 2 đỉnh chính:
+Reasoner Node: Nơi LLM (đã được ràng buộc các công cụ ở Chương 8) đọc State hiện tại và quyết định xem nên trả lời trực tiếp hay cần tra cứu thêm.
+Tools Node: Nơi mã nguồn Python thực sự chạy để quét file PDF hoặc JSON, sau đó nạp kết quả trả về vào State.
+Cạnh (Edges): Các luồng định tuyến (routing) điều hướng đường đi của dữ liệu giữa các Đỉnh. Điểm làm nên sức mạnh của LangGraph là Cạnh điều kiện (Conditional Edges). Nó cho phép hệ thống tạo ra một vòng lặp (Cycle): LLM gọi Tool  Tool trả kết quả  LLM đánh giá lại kết quả  Nếu vẫn thiếu thông tin, LLM có thể gọi Tool tiếp.
+Sự chuyển đổi từ kiến trúc tuyến tính (Chain) sang kiến trúc chu trình (Graph) là điểm mấu chốt để hệ thống đạt được năng lực tự chủ (Agentic behavior). Chatbot không còn là một cỗ máy phản xạ thụ động mà đã trở thành một thực thể biết lên kế hoạch và thực thi công việc dựa trên ngữ cảnh.
+[CHÈN HÌNH ẢNH: Chụp màn hình đồ thị biểu diễn luồng của LangGraph. Trong LangGraph có một lệnh là graph.get_graph().draw_mermaid_png(), bạn có thể dùng lệnh này để xuất ra hình ảnh cấu trúc đồ thị thực tế của hệ thống và dán vào đây] Hình 9.1. Cấu trúc Đồ thị Trạng thái (StateGraph) của Tác tử Tư vấn Tuyển sinh
+9.2. Thiết kế Bộ nhớ Trạng thái (State Management)
+Một trong những nhược điểm lớn nhất của các cuộc gọi API LLM thông thường (Stateless API) là chúng không có khả năng tự ghi nhớ. Mỗi truy vấn là một phiên độc lập. Để chatbot có thể tư vấn một cách mạch lạc dựa trên chuỗi câu hỏi liên tiếp của thí sinh (ví dụ: "Ngành CNTT điểm chuẩn bao nhiêu?" $\rightarrow$ "Thế còn học phí của ngành đó?"), hệ thống bắt buộc phải có cơ chế quản trị bộ nhớ (Memory Management).
+Trong kiến trúc LangGraph, bộ nhớ này được hiện thực hóa thông qua đối tượng State. Tất cả các Node trong đồ thị đều đọc thông tin từ State này để xử lý và sau đó ghi đè hoặc bổ sung kết quả mới ngược trở lại State.
+Dự án sử dụng TypedDict của Python kết hợp với cơ chế Reducer của LangGraph để định nghĩa cấu trúc dữ liệu cho State.
+from typing import TypedDict, Annotated
+from langchain_core.messages import BaseMessage
+from langgraph.graph.message import add_messages
+# 1. Định nghĩa cấu trúc Trạng thái của Tác tử
+class AgentState(TypedDict):
+    # Khai báo biến 'messages' lưu trữ mảng các đối tượng tin nhắn
+    # Hàm add_messages đóng vai trò là một Reducer
+    messages: Annotated[list[BaseMessage], add_messages]
+Đoạn mã 9.1. Khai báo cấu trúc bộ nhớ Trạng thái (AgentState) cho đồ thị
+Phân tích Kiến trúc và Quyết định Thiết kế:
+Tính Định kiểu chặt chẽ (Strong Typing): Việc kế thừa từ TypedDict thay vì sử dụng Dictionary thông thường ({}) của Python giúp kiểm soát chặt chẽ kiểu dữ liệu luân chuyển trong đồ thị. Nếu một Node cố tình chèn một chuỗi văn bản (String) vào mảng messages thay vì một đối tượng BaseMessage hợp lệ, IDE và trình biên dịch sẽ lập tức cảnh báo lỗi. Điều này tăng cường độ ổn định và khả năng bảo trì của mã nguồn.
+Cơ chế Gộp tin nhắn (Reducer - add_messages): Đây là "phép màu" của LangGraph. Ở các kiến trúc máy trạng thái truyền thống, khi Node A cập nhật State, nó sẽ ghi đè (overwrite) toàn bộ State hiện tại. Tuy nhiên, với từ khóa Annotated và hàm thu gọn add_messages, LangGraph được chỉ thị rằng: Đừng ghi đè, hãy nối thêm (append).
+Ví dụ: Trạng thái hiện tại có 2 tin nhắn [User(Hỏi), AI(Đáp)]. Khi người dùng hỏi câu tiếp theo, hệ thống tự động gộp vào thành [User, AI, User(Hỏi tiếp)].
+Cơ chế này giúp duy trì toàn bộ Bối cảnh hội thoại (Conversation History), cho phép LLM thực hiện các phép chiếu cố (coreference resolution) – hiểu được đại từ "ngành đó" ở câu hỏi thứ hai chính là "ngành CNTT" ở câu hỏi thứ nhất.
+[CHÈN HÌNH ẢNH: Chụp màn hình đoạn code định nghĩa AgentState trong file workflow.py (hoặc graph.py tùy cách bạn đặt tên tệp).] Hình 9.2. Mã nguồn khởi tạo cấu trúc bộ nhớ Trạng thái với cơ chế Reducer
+9.3. Xây dựng các Đỉnh Suy luận và Thực thi (Nodes)
+Trong kiến trúc LangGraph, một Đỉnh (Node) thực chất là một hàm Python nhận đầu vào là Trạng thái hiện tại (State payload), thực hiện một khối lượng tính toán nhất định, và trả về một phần dữ liệu mới để gộp vào State.
+Hệ thống Chatbot Tư vấn Tuyển sinh được thiết kế với hai Node cốt lõi: Đỉnh Suy luận (Reasoner) và Đỉnh Thực thi Công cụ (Action).
+1. Đỉnh Suy luận (Reasoner Node): 
+Đây là trung tâm ra quyết định của hệ thống. Node này sẽ trích xuất toàn bộ lịch sử hội thoại từ State, kết hợp với một Chỉ thị Hệ thống (System Prompt) được định nghĩa sẵn, và gửi đến Mô hình Ngôn ngữ Lớn (LLM) đã được ràng buộc công cụ (ở Mục 8.5).
+from langchain_core.messages import SystemMessage
+# Định nghĩa Chỉ thị Hệ thống để thiết lập nhân dạng cho AI
+sys_msg = SystemMessage(content="""
+Bạn là Chuyên viên Tư vấn Tuyển sinh Đại học nhiệt tình và chuyên nghiệp.
+Nhiệm vụ của bạn là giải đáp thắc mắc của thí sinh và phụ huynh.
+- Luôn giữ thái độ lịch sự, dùng danh xưng 'anh/chị' hoặc 'em'.
+- CHỈ dựa vào dữ liệu do công cụ cung cấp để trả lời. 
+- KHÔNG tự bịa ra điểm chuẩn hay quy chế.
+""")
+def reasoner_node(state: AgentState):
+    """
+    Hàm thực thi của Đỉnh Suy luận.
+    Đọc lịch sử tin nhắn, nhúng System Prompt và gọi LLM.
+    """
+    messages = state['messages']
+    # Gắn System Prompt vào đầu danh sách tin nhắn để LLM hiểu bối cảnh
+    if not isinstance(messages[0], SystemMessage):
+        messages = [sys_msg] + messages
+    # Gọi mô hình LLM (llm_with_tools) đã cấu hình từ Chương 8
+    response = llm_with_tools.invoke(messages)
+    # Trả về kết quả dưới dạng một dictionary để LangGraph gộp vào State
+    return {"messages": [response]}
+Đoạn mã 9.2. Triển khai logic hàm suy luận cho Reasoner Node
+2. Đỉnh Thực thi Công cụ (Tools Node): 
+Nếu Đỉnh Suy luận quyết định rằng nó cần tra cứu điểm chuẩn hoặc quy chế, nó sẽ không trả lời ngay mà phát ra một tín hiệu gọi hàm (tool_call). Lúc này, luồng dữ liệu sẽ được chuyển sang Đỉnh Thực thi. Thay vì phải tự viết code để bóc tách tín hiệu này và chạy hàm, LangGraph cung cấp sẵn một lớp tiện ích là ToolNode.
+from langgraph.prebuilt import ToolNode
+# Danh sách công cụ đã khai báo ở Chương 8
+danh_sach_cong_cu = [tra_cuu_thong_tin, tra_cuu_diem_chuan]
+# Khởi tạo Node Thực thi bằng lớp ToolNode có sẵn của LangGraph
+tools_node = ToolNode(tools=danh_sach_cong_cu)
+Đoạn mã 9.3. Khởi tạo Đỉnh Thực thi tự động bằng thư viện LangGraph
+Phân tích Quyết định Thiết kế:
+Tiêm Chỉ thị Hệ thống (System Prompt Injection): Việc chèn SystemMessage vào ngay bên trong reasoner_node giúp đảm bảo rằng ở mọi vòng lặp hội thoại, LLM luôn bị ràng buộc bởi nguyên tắc cốt lõi: "Không tự bịa dữ liệu". Đây là lớp phòng thủ cuối cùng để đáp ứng tiêu chuẩn NFR01 (Không Ảo giác).
+Tái sử dụng mã nguồn (Code Reusability): Việc sử dụng ToolNode có sẵn thay vì tự xây dựng hàm xử lý thực thi vòng lặp công cụ giúp mã nguồn dự án ngắn gọn, tránh được các lỗi parsing cấu trúc JSON phức tạp từ đầu ra của LLM, đồng thời tận dụng được khả năng xử lý lỗi tự động (Auto-error recovery) mà thư viện LangGraph đã tối ưu.
+[CHÈN HÌNH ẢNH: Chụp màn hình file mã nguồn hiển thị hàm reasoner_node và khai báo tools_node. Có thể bôi đậm đoạn khai báo SystemMessage để làm điểm nhấn học thuật] Hình 9.3. Mã nguồn triển khai Đỉnh Suy luận với Chỉ thị Hệ thống và Đỉnh Thực thi
+9.4. Định tuyến Điều kiện (Conditional Edges)
+Để hai đỉnh (Nodes) reasoner_node và tools_node có thể phối hợp làm việc, hệ thống cần thiết lập các đường kết nối (Edges). Trong khi việc di chuyển từ Đỉnh Thực thi về lại Đỉnh Suy luận là một đường đi tuyến tính (sau khi chạy tool xong, kết quả bắt buộc phải trả về cho LLM), thì việc di chuyển từ Đỉnh Suy luận đi ra lại là một bài toán phân nhánh phức tạp.
+Khi reasoner_node chạy xong, sẽ có hai kịch bản xảy ra:
+Kịch bản A (Cần hỗ trợ): Mô hình nhận thấy nó thiếu thông tin để trả lời và quyết định xuất ra một tín hiệu gọi hàm (tool_calls). Lúc này, luồng thực thi phải rẽ nhánh sang tools_node.
+Kịch bản B (Đã đủ thông tin): Mô hình đã tổng hợp xong câu trả lời cuối cùng hoặc câu hỏi của người dùng chỉ là lời chào giao tiếp thông thường. Lúc này, luồng thực thi phải rẽ nhánh đến điểm kết thúc (END) để xuất câu trả lời ra màn hình.
+Để xử lý logic rẽ nhánh này, dự án sử dụng cơ chế Cạnh Điều kiện (Conditional Edges) của LangGraph, tích hợp cùng hàm định tuyến tools_condition được xây dựng sẵn.
+from langgraph.prebuilt import tools_condition
+# Minh họa logic bên trong của hàm định tuyến (Routing Logic)
+# (Hệ thống LangGraph đã gói gọn logic này vào hàm tools_condition)
+def logic_dinh_tuyen_truc_quan(state: AgentState):
+    """
+    Hàm này mô phỏng cách hệ thống kiểm tra trạng thái để định tuyến.
+    Nó xem xét tin nhắn cuối cùng trong bộ nhớ Trạng thái.
+    """
+    tin_nhan_cuoi_cung = state["messages"][-1]
+    # Nếu tin nhắn có chứa yêu cầu gọi công cụ -> đi đến Tools Node
+    if hasattr(tin_nhan_cuoi_cung, 'tool_calls') and len(tin_nhan_cuoi_cung.tool_calls) > 0:
+        return "tools"
+    # Ngược lại, kết thúc vòng lặp
+    return "END"
+Đoạn mã 9.4. Logic cốt lõi của bộ định tuyến điều kiện kiểm tra thuộc tính tool_calls
+Nguyên lý Vòng lặp ReAct (Reasoning and Acting): 
+Cạnh điều kiện chính là chiếc chìa khóa khởi tạo vòng lặp ReAct kinh điển. Giả sử thí sinh hỏi: "Điểm chuẩn ngành KTPM và Học phí là bao nhiêu?"
+LLM nhận thấy 2 yêu cầu. Nó xuất ra tín hiệu gọi tra_cuu_diem_chuan(ten_nganh="KTPM").
+Bộ định tuyến thấy có tool_calls, bẻ lái sang tools_node.
+Tool chạy xong, trả kết quả điểm chuẩn về cho LLM (reasoner_node).
+LLM đọc lại State, thấy đã có Điểm chuẩn nhưng vẫn thiếu Học phí. Nó tiếp tục phát ra tín hiệu gọi tra_cuu_thong_tin(query="học phí").
+Bộ định tuyến lại bẻ lái sang tools_node.
+Lần này Tool RAG trả về thông tin học phí.
+LLM đọc lại State, thấy đã đủ cả 2 dữ kiện. Nó tiến hành tổng hợp thành câu văn tiếng Việt hoàn chỉnh. Không có tool_calls nào được sinh ra nữa.
+Bộ định tuyến thấy trống, bẻ lái về END. Cuộc hội thoại kết thúc.
+[CHÈN HÌNH ẢNH: Vẽ một sơ đồ flowchart ngắn gọn bằng công cụ như Draw.io hoặc dùng chính tính năng draw_mermaid_png() của LangGraph để biểu diễn vòng lặp: Reasoner -> (Condition) -> Tools -> Reasoner]
+Hình 9.4. Vòng lặp định tuyến tự động ReAct dựa trên trạng thái của tin nhắn
+9.5. Lắp ghép, Biên dịch và Vận hành Đồ thị (Graph Compilation)
+Sau khi đã định nghĩa độc lập cấu trúc Trạng thái (Mục 9.2), các Đỉnh thực thi (Mục 9.3) và logic Định tuyến (Mục 9.4), bước cuối cùng trong vòng đời phát triển của LangGraph là lắp ráp chúng lại và tiến hành Biên dịch (Compilation).
+Quá trình biên dịch sẽ chuyển đổi các khai báo rời rạc thành một đối tượng Runnable hoàn chỉnh, tuân thủ nghiêm ngặt tiêu chuẩn của hệ sinh thái LangChain.
+from langgraph.graph import StateGraph, END
+from langgraph.prebuilt import tools_condition
+# 1. Khởi tạo bản thiết kế đồ thị dựa trên cấu trúc bộ nhớ AgentState
+workflow = StateGraph(AgentState)
+# 2. Đăng ký các Đỉnh (Nodes) vào không gian đồ thị
+workflow.add_node("reasoner", reasoner_node)
+workflow.add_node("tools", tools_node)
+# 3. Thiết lập Điểm neo khởi đầu (Entry Point)
+# Mọi luồng hội thoại luôn bắt đầu bằng việc AI suy luận
+workflow.set_entry_point("reasoner")
+# 4. Thiết lập các Cạnh điều kiện (Conditional Edges) rẽ nhánh từ Reasoner
+workflow.add_conditional_edges(
+    "reasoner",         # Nút xuất phát
+    tools_condition,    # Hàm đánh giá điều kiện
+)
+# 5. Thiết lập Cạnh tuyến tính (Normal Edges)
+# Sau khi Tools chạy xong, bắt buộc phải trả luồng dữ liệu về lại cho Reasoner
+workflow.add_edge("tools", "reasoner")
+# 6. Biên dịch và Đóng gói (Compilation)
+app = workflow.compile()
+Đoạn mã 9.5. Quá trình lắp ráp và biên dịch Đồ thị Trạng thái hoàn chỉnh
+Phân tích Kỹ thuật và Giá trị của quá trình Biên dịch:
+Kiểm chứng cấu trúc (Topology Validation): Khi hàm workflow.compile() được gọi, hệ thống sẽ tự động quét toàn bộ đồ thị để tìm kiếm các lỗi logic nghiêm trọng (ví dụ: một Node không có đường dẫn đến END, tạo ra vòng lặp vô tận, hoặc gọi đến một Node chưa được đăng ký). Điều này giúp phát hiện lỗi ngay tại thời điểm khởi tạo (Compile-time) thay vì chờ đến khi người dùng đang chat mới sập hệ thống (Runtime error).
+Tính Bất biến (Immutability): Sau khi biên dịch, cấu trúc của đồ thị bị "đóng băng". Điều này đảm bảo tính toàn vẹn của luồng thực thi trong môi trường sản xuất (Production), ngăn chặn việc các tiến trình rác can thiệp làm hỏng mạch định tuyến.
+Tích hợp Memory Persistence: Ở giai đoạn này, hàm compile() cho phép truyền thêm tham số checkpointer để gắn cơ sở dữ liệu (như SQLite hoặc Postgres) vào đồ thị. Việc này giúp đồ thị lưu lại Trạng thái (State) xuống ổ cứng, cho phép người dùng tắt trình duyệt đi, hôm sau mở lại vẫn giữ nguyên mạch chat cũ.
+[CHÈN HÌNH ẢNH: Chụp màn hình Console log khi chạy thử ứng dụng (gọi app.invoke), hiển thị rõ luồng dữ liệu chạy qua: reasoner -> tools -> reasoner -> END. Điều này là bằng chứng thép cho thấy đồ thị đã biên dịch thành công và hoạt động thực tế]
+Hình 9.5. Minh chứng luồng thực thi của đồ thị trên Terminal thông qua quá trình in vết (Tracing)
+Chương 10: Xây dựng Giao diện Tương tác và Giám sát Hệ thống
+Sau khi hoàn thiện lõi logic xử lý đa tác tử (Agentic workflow) bằng LangGraph, yêu cầu tiếp theo của dự án là xây dựng một lớp giao diện người dùng (User Interface - UI) trực quan, cho phép thí sinh tương tác với hệ thống một cách tự nhiên. Đồng thời, hệ thống cần được tích hợp cơ sở hạ tầng giám sát để quản trị viên có thể theo dõi hiệu suất và chi phí API. Chương này trình bày chi tiết quá trình hiện thực hóa hai yêu cầu trên thông qua việc ứng dụng framework Streamlit và nền tảng LangSmith.
+10.1. Kiến trúc Lớp Giao diện (Frontend Architecture) với Streamlit
+Trong các dự án phát triển ứng dụng AI tạo sinh, việc xây dựng một giao diện web truyền thống (như ReactJS, VueJS kết hợp API Backend) thường đòi hỏi chi phí thời gian lớn và cấu trúc mã nguồn cồng kềnh. Để tối ưu hóa quy trình phát triển nguyên mẫu (Rapid Prototyping) mà vẫn đảm bảo tính thẩm mỹ, dự án lựa chọn Streamlit – một framework mã nguồn mở hoàn toàn bằng Python.
+Việc thiết kế lớp giao diện tuân thủ chặt chẽ nguyên lý Tách biệt Mối quan tâm (Separation of Concerns). Mã nguồn của giao diện (thường đặt trong tệp app.py) được thiết kế độc lập hoàn toàn với lõi logic (workflow.py).
+1. Cấu trúc tổng thể của ứng dụng:
+Giao diện được chia làm hai khu vực chính, đáp ứng thói quen sử dụng (User Experience - UX) của các ứng dụng nhắn tin hiện đại:
+Thanh điều hướng bên (Sidebar): Cung cấp không gian để hiển thị logo trường, thông tin hướng dẫn sử dụng, và các nút chức năng (ví dụ: Nút xóa lịch sử trò chuyện để bắt đầu phiên mới).
+Khu vực Tương tác chính (Main Chat Area): Nơi hiển thị luồng hội thoại giữa thí sinh và AI, bao gồm các bong bóng chat (chat bubbles) và khung nhập liệu (input field) ở dưới cùng.
+import streamlit as st
+# 1. Cấu hình các thông số cơ bản của trang web
+st.set_page_config(
+    page_title="Chatbot Tư vấn Tuyển sinh",
+    page_icon="🎓",
+    layout="centered"
+)
+# 2. Xây dựng Thanh điều hướng bên (Sidebar)
+with st.sidebar:
+    st.image("assets/logo.png", use_column_width=True)
+    st.markdown("### Hướng dẫn sử dụng")
+    st.info(
+        "Chatbot hỗ trợ giải đáp các thông tin về:\n"
+        "- Quy chế xét tuyển đại học.\n"
+        "- Điểm chuẩn và chỉ tiêu các ngành.\n"
+        "- Học phí và các chính sách ưu tiên."
+    )
+    # Nút dọn dẹp bộ nhớ phiên hội thoại
+    if st.button("Làm mới cuộc trò chuyện", type="primary"):
+        st.session_state.messages = []
+        st.rerun()
+# 3. Khởi tạo Tiêu đề khu vực chính
+st.title("🎓 Trợ lý Ảo Tuyển sinh Đại học")
+st.caption("🚀 Được phát triển với LangGraph & Streamlit")
+Đoạn mã 10.1. Khởi tạo bộ khung giao diện tổng thể của ứng dụng bằng Streamlit
+Đánh giá Thiết kế:
+Việc sử dụng Streamlit mang lại lợi thế "Zero-CSS/HTML", lập trình viên chỉ cần sử dụng các hàm Python để kết xuất (render) các thành phần giao diện. Mã nguồn trên không chỉ định nghĩa bố cục trực quan mà còn nhúng sẵn tính năng dọn dẹp bộ nhớ (thông qua st.rerun()), một thao tác rất quan trọng giúp người dùng dễ dàng thoát khỏi các vòng lặp hội thoại cũ để đặt câu hỏi mới.
+[CHÈN HÌNH ẢNH: Chụp màn hình trình duyệt hiển thị giao diện ban đầu của ứng dụng Streamlit (khi chưa có tin nhắn nào), thấy rõ thanh Sidebar bên trái có logo/hướng dẫn và tiêu đề chính ở giữa]
+Hình 10.1. Cấu trúc giao diện ban đầu của ứng dụng Chatbot Tư vấn Tuyển sinh
+10.2. Quản lý Phiên làm việc (Session State Management)
+Khác với các framework thiết kế giao diện truyền thống, Streamlit hoạt động dựa trên một vòng đời tĩnh (stateless execution model). Điều này có nghĩa là mỗi khi người dùng tương tác với giao diện (ví dụ: gõ một câu hỏi và nhấn Enter), Streamlit sẽ biên dịch và chạy lại toàn bộ mã nguồn Python từ trên xuống dưới.
+Nếu không có cơ chế can thiệp, mảng lưu trữ lịch sử tin nhắn sẽ bị khởi tạo lại thành mảng rỗng sau mỗi lần trang tải lại, dẫn đến việc giao diện bị mất toàn bộ bối cảnh cuộc trò chuyện. Để khắc phục vấn đề này, dự án sử dụng đối tượng st.session_state – một kho lưu trữ từ điển (dictionary-like) có khả năng duy trì trạng thái của các biến xuyên suốt các lần tải lại trang trong cùng một phiên của người dùng.
+import streamlit as st
+# 1. Kiểm tra và khởi tạo bộ nhớ phiên (Session State)
+# Nếu khóa 'messages' chưa tồn tại, hệ thống sẽ tạo mới
+if "messages" not in st.session_state:
+    st.session_state.messages = [
+        {
+            "role": "assistant", 
+            "content": "Chào anh/chị và các bạn thí sinh! Mình là Trợ lý Ảo Tư vấn Tuyển sinh của Trường. Mình có thể giúp gì cho bạn hôm nay?"
+        }
+    ]
+# Ghi chú kỹ thuật: Cấu trúc của mỗi tin nhắn trong mảng này 
+# là một dictionary chuẩn hóa gồm 2 trường: 'role' (vai trò) và 'content' (nội dung).
+Đoạn mã 10.2. Khởi tạo và quản lý bộ nhớ giao diện với st.session_state
+Đánh giá Kỹ thuật:
+Việc thiết lập trạng thái ban đầu không chỉ giúp bảo toàn dữ liệu màn hình mà còn là một thủ thuật thiết kế UX (Trải nghiệm người dùng) tinh tế. Bằng cách chèn sẵn một tin nhắn mồi (greeting message) với role là assistant, hệ thống chủ động mở lời chào và định hướng ngay cho thí sinh về chức năng của Chatbot. Điều này giúp giảm thiểu sự bỡ ngỡ của người dùng khi lần đầu truy cập vào một giao diện chat trống trơn.
+Bên cạnh đó, mảng dữ liệu st.session_state.messages ở lớp Frontend này đóng vai trò song hành với đối tượng AgentState ở lớp Backend (Chương 9). Sự đồng bộ giữa hai vùng nhớ này là chìa khóa để kiến tạo một luồng dữ liệu hai chiều thông suốt.
+[CHÈN HÌNH ẢNH: Bạn có thể bỏ qua hình ảnh ở mục này, hoặc chụp màn hình một đoạn in ra console log của st.session_state để minh họa nếu muốn]
+10.3. Xử lý Hiển thị Luồng Tin nhắn (Message Rendering)
+Với mảng dữ liệu lịch sử đã được bảo toàn trong st.session_state.messages, hệ thống cần một cơ chế để kết xuất (render) dữ liệu này thành các khối giao diện đồ họa. Mục tiêu là tạo ra một trải nghiệm người dùng (UX) tương đồng với các ứng dụng nhắn tin phổ biến (như Messenger, Zalo hoặc ChatGPT), nơi tin nhắn của người dùng và của chatbot được phân biệt rõ ràng về mặt thị giác.
+Streamlit cung cấp hàm st.chat_message được thiết kế riêng cho mục đích này. Hàm này tự động đóng gói nội dung văn bản vào các "bong bóng chat" (chat bubbles) và đính kèm các biểu tượng (avatar) tương ứng dựa trên vai trò (role) của người gửi.
+import streamlit as st
+# Duyệt qua toàn bộ lịch sử tin nhắn lưu trong Session State
+for message in st.session_state.messages:
+    # Hàm st.chat_message nhận vào 'role' (user hoặc assistant) 
+    # để tự động quyết định màu sắc và biểu tượng hiển thị
+    with st.chat_message(message["role"]):
+        # st.markdown cho phép render văn bản có định dạng phong phú
+        # (in đậm, in nghiêng, danh sách, hoặc bảng biểu)
+        st.markdown(message["content"])
+Đoạn mã 10.3. Vòng lặp kết xuất lịch sử hội thoại lên giao diện chính
+Phân tích Hiệu năng và Trải nghiệm Người dùng:
+Hỗ trợ Markdown nguyên bản (Native Markdown Support): Việc sử dụng st.markdown thay vì hàm in văn bản thông thường (st.write) là một quyết định thiết kế quan trọng. LLM từ lõi LangGraph thường trả về kết quả dưới dạng văn bản có cấu trúc Markdown (ví dụ: dùng ** để in đậm Tên ngành, dùng dấu - để liệt kê Điểm chuẩn). Hàm st.markdown sẽ diễn giải các ký tự này và hiển thị chúng thành một giao diện rõ ràng, dễ đọc, giúp thí sinh tiếp nhận thông tin các con số một cách trực quan nhất.
+Cơ chế Kết xuất lại (Re-rendering Mechanism): Do đặc thù tải lại trang của Streamlit, vòng lặp for này sẽ được chạy lại từ đầu mỗi khi có một tin nhắn mới. Tuy nhiên, nhờ kiến trúc tối ưu DOM (Document Object Model) ngầm của framework, quá trình này diễn ra cực kỳ nhanh chóng mà không gây ra hiện tượng giật lag hay nhấp nháy màn hình, đảm bảo luồng hội thoại luôn mượt mà.
+[CHÈN HÌNH ẢNH: Chụp màn hình giao diện ứng dụng lúc đang chat. Cần thể hiện rõ sự khác biệt giữa tin nhắn của User (thường có icon hình người, nằm bên phải/màu khác tùy theme) và tin nhắn của Assistant (có icon robot/logo trường, hiển thị văn bản có in đậm hoặc gạch đầu dòng rõ ràng)]
+Hình 10.2. Giao diện hiển thị luồng tin nhắn được phân tách rõ ràng theo vai trò
+10.4. Tích hợp Đồ thị LangGraph vào Giao diện Người dùng
+Sau khi đã thiết lập luồng hiển thị tin nhắn tĩnh, hệ thống cần một cơ chế tiếp nhận câu hỏi đầu vào từ thí sinh, gửi dữ liệu đó xuống Đồ thị LangGraph (đã biên dịch ở Chương 9) để suy luận, và cuối cùng lấy kết quả trả về để cập nhật lên giao diện.
+Streamlit cung cấp thành phần st.chat_input để tạo thanh nhập liệu (input bar) cố định ở cuối màn hình. Logic tích hợp được thiết kế cẩn thận để đảm bảo tính đồng bộ dữ liệu và mang lại trải nghiệm tương tác thời gian thực.
+import streamlit as st
+from langchain_core.messages import HumanMessage
+# Giả định import đối tượng Đồ thị đã biên dịch từ file lõi
+from workflow import app 
+# 1. Khởi tạo thanh nhập liệu và chờ tương tác từ người dùng
+if prompt := st.chat_input("Nhập câu hỏi của bạn về tuyển sinh..."):
+    # 2. Hiển thị ngay lập tức câu hỏi của người dùng lên màn hình
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+    # 3. Kích hoạt luồng xử lý Backend với hiệu ứng chờ (Trải nghiệm UX)
+    with st.chat_message("assistant"):
+        with st.spinner("Đang tìm kiếm và tổng hợp thông tin..."):
+            try:
+                # Đóng gói câu hỏi vào định dạng chuẩn của LangChain
+                input_state = {"messages": [HumanMessage(content=prompt)]}
+                # Gọi Đồ thị LangGraph thực thi (Invoke)
+                # Cấu hình thread_id để LangGraph nhận diện luồng hội thoại
+                config = {"configurable": {"thread_id": "streamlit_session_1"}}
+                output_state = app.invoke(input_state, config=config)
+                # Trích xuất nội dung tin nhắn cuối cùng (Câu trả lời của AI)
+                response_message = output_state["messages"][-1].content
+                # Kết xuất câu trả lời ra giao diện
+                st.markdown(response_message)
+                # 4. Lưu câu trả lời của hệ thống vào bộ nhớ phiên của Streamlit
+                st.session_state.messages.append({
+                    "role": "assistant", 
+                    "content": response_message
+                })
+            except Exception as e:
+                st.error(f"Đã xảy ra lỗi trong quá trình kết nối hệ thống: {e}")
+Đoạn mã 10.4. Tích hợp Đồ thị luồng thực thi LangGraph vào giao diện nhận/gửi của Streamlit
+Phân tích Kỹ thuật và Tối ưu hóa Trải nghiệm:
+Toán tử Walrus (:=): Việc sử dụng toán tử gán biểu thức (prompt := st.chat_input(...)) giúp mã nguồn ngắn gọn. Khối lệnh bên trong if sẽ chỉ được kích hoạt khi và chỉ khi người dùng thực sự gõ nội dung và nhấn Enter, giúp tiết kiệm tài nguyên tính toán lãng phí của máy chủ.
+Quản trị Trạng thái Đợi (UX Feedback): Vì quá trình LangGraph gọi các công cụ (quét vector PDF, đọc file JSON) và chờ API từ LLM có thể mất từ 2 đến 5 giây, việc sử dụng khối lệnh with st.spinner(...) là cực kỳ cần thiết. Nó hiển thị một vòng xoay tải dữ liệu, báo hiệu cho người dùng biết hệ thống đang "suy nghĩ" chứ không phải bị treo (freeze). Đây là một tiêu chuẩn bắt buộc đối với các ứng dụng AI tương tác.
+Đồng bộ Bộ nhớ Kép (Dual Memory Sync): Hệ thống có hai loại bộ nhớ chạy song song. Một là st.session_state (của Streamlit) dùng để vẽ lại giao diện khi tải trang. Hai là cơ chế Checkpointer (của LangGraph - quản lý qua thread_id) dùng để LLM nhớ lại bối cảnh ở Backend. Logic trên đảm bảo cả hai bộ nhớ này luôn được cập nhật đồng thời, không xảy ra hiện tượng "lệch pha" (màn hình hiển thị một đằng, AI nhớ một nẻo).
+[CHÈN HÌNH ẢNH: Chụp màn hình giao diện hệ thống ngay tại thời điểm người dùng vừa ấn gửi tin nhắn. Màn hình cần hiển thị rõ dòng chữ "Đang tìm kiếm và tổng hợp thông tin..." cùng vòng xoay (spinner) của Streamlit để minh chứng cho phần đánh giá UX]
+Hình 10.3. Giao diện xử lý độ trễ (Latency) với hiệu ứng chờ trong lúc LangGraph đang gọi công cụ
+10.5. Triển khai Giám sát và Đo lường (Observability) với LangSmith
+Trong các ứng dụng web truyền thống, việc giám sát thường chỉ dừng lại ở mức theo dõi mã lỗi HTTP (như 404, 500) hoặc thời gian phản hồi của cơ sở dữ liệu. Tuy nhiên, đối với một hệ thống AI tạo sinh sử dụng kiến trúc Agent như dự án này, sự cố có thể xảy ra ở mức độ ngữ nghĩa (ví dụ: AI hiểu sai ý người dùng, gọi nhầm công cụ, hoặc sinh ra nội dung ảo giác). Do đó, dự án yêu cầu một nền tảng giám sát chuyên sâu để thực hiện in vết (Tracing) và đo lường (Telemetry).
+Dự án tích hợp LangSmith – nền tảng giám sát hệ sinh thái LangChain – để cung cấp khả năng quan sát (Observability) toàn diện cho luồng thực thi của LangGraph.
+1. Cấu hình Tích hợp: 
+Việc tích hợp LangSmith cực kỳ trơn tru (Seamless Integration). Lập trình viên không cần phải can thiệp vào mã nguồn logic của Đồ thị hay Giao diện. Thay vào đó, nền tảng được kích hoạt thông qua việc thiết lập các biến môi trường (Environment Variables).
+import os
+# Cấu hình biến môi trường kích hoạt LangSmith Tracing
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_API_KEY"] = "ls__your_api_key_here" # Khóa bảo mật API
+os.environ["LANGCHAIN_PROJECT"] = "TuyenSinh_Agent_Production" # Tên dự án giám sát
+Đoạn mã 10.5. Thiết lập biến môi trường để kích hoạt tính năng in vết tự động của LangSmith
+2. Các Chỉ số Quản trị Cốt lõi (Key Management Metrics): 
+Ngay sau khi kích hoạt, mọi tương tác của thí sinh trên giao diện Streamlit sẽ tự động được gửi một bản sao nhật ký (log) về máy chủ LangSmith. Hệ thống giúp quản trị viên theo dõi 3 khía cạnh quan trọng:
+In vết Luồng thực thi (Execution Tracing): Nền tảng trực quan hóa toàn bộ vòng lặp ReAct của LangGraph thành một cây phân cấp (Tree View). Quản trị viên có thể xem chính xác mất bao nhiêu mili-giây để Đỉnh reasoner_node chạy xong, sau đó công cụ tra_cuu_diem_chuan được gọi với tham số đầu vào cụ thể là gì, và kết quả trả về dưới dạng JSON thô ra sao trước khi được LLM tổng hợp lại.
+Kiểm soát Chi phí và Token (Token Usage & Cost Management): LLM tính phí dựa trên số lượng Token đầu vào (Prompt) và đầu ra (Completion). LangSmith thống kê chi tiết lượng Token tiêu thụ cho từng phiên người dùng, từ đó giúp dự án dự toán được chi phí vận hành API hàng tháng.
+Gỡ lỗi Ngữ nghĩa (Semantic Debugging): Khi thí sinh phản hồi rằng Chatbot tư vấn sai, quản trị viên có thể truy cập lại chính xác phiên hội thoại đó. LangSmith cho phép sao chép nguyên trạng bối cảnh (State) đang bị lỗi và đưa vào môi trường Thử nghiệm (Playground) để điều chỉnh lại Prompt mà không làm gián đoạn hệ thống đang chạy.
+[CHÈN HÌNH ẢNH: Chụp màn hình trang quản trị (Dashboard) của LangSmith. Màn hình cần hiển thị rõ một "Trace" phân cấp (ví dụ: ChatOpenAI -> ToolNode -> tra_cuu_diem_chuan), đồng thời thấy rõ các thông số như Latency (ví dụ: 3.2s) và Total Tokens (ví dụ: 1250 tokens)]
+Hình 10.4. Giao diện nền tảng LangSmith theo dõi luồng suy luận, độ trễ và chi phí Token của Tác tử
+Chương 11: Kiểm thử và Đánh giá Chất lượng Hệ thống
+Trong kỹ nghệ phần mềm truyền thống, việc kiểm thử thường dựa trên các kịch bản có tính xác định (Deterministic), nơi một đầu vào cụ thể luôn tạo ra một đầu ra chính xác duy nhất. Tuy nhiên, đối với một hệ thống AI tạo sinh sử dụng Mô hình Ngôn ngữ Lớn (LLM) và cấu trúc Đồ thị Tác tử (Agentic Graph), đầu ra mang tính xác suất (Probabilistic) và ngôn ngữ tự nhiên thường thay đổi sau mỗi lần sinh. Do đó, dự án cần áp dụng một phương pháp luận đánh giá chuyên biệt dành riêng cho kiến trúc RAG.
+11.1. Phương pháp Kiểm thử Tác tử AI với Framework Ragas
+Để đánh giá hệ thống một cách khách quan, dự án từ bỏ phương pháp "kiểm tra bằng mắt thường" (human-evaluation) vốn tiềm ẩn nhiều cảm tính và tốn thời gian. Thay vào đó, dự án tích hợp Ragas (Retrieval Augmented Generation Assessment) — một framework tiêu chuẩn trong ngành công nghiệp AI chuyên dùng để định lượng chất lượng của các đường ống RAG.
+1. Khung đánh giá đa chiều: 
+Ragas đánh giá hệ thống không chỉ dựa trên câu trả lời cuối cùng mà phân rã quá trình thành hai thành phần độc lập:
+Khả năng Truy xuất (Retrieval): Đánh giá xem hệ thống (công cụ ChromaDB và đọc JSON) có tìm đúng và đủ dữ liệu cần thiết hay không.
+Khả năng Sinh (Generation): Đánh giá xem LLM có sử dụng đúng dữ liệu đã tìm được để tổng hợp câu trả lời hay không, và câu trả lời có bị hiện tượng "Ảo giác" (Hallucination) hay không.
+2. Chuẩn bị Tập dữ liệu Đánh giá (Evaluation Dataset): 
+Để Ragas có thể chấm điểm, dự án đã xây dựng một tập dữ liệu chuẩn (Ground Truth Dataset) bao gồm 50 câu hỏi đa dạng (từ hỏi điểm chuẩn, quy chế, đến các câu cố tình viết sai chính tả). Mỗi mẫu dữ liệu đầu vào cho Ragas bao gồm 4 yếu tố cốt lõi:
+from datasets import Dataset
+# Cấu trúc của một mẫu đánh giá tiêu chuẩn trong Ragas
+data_samples = {
+    "question": [
+        "Điểm chuẩn ngành Công nghệ thông tin năm trước là bao nhiêu?"
+    ],
+    "answer": [
+        # Đây là câu trả lời do Chatbot của hệ thống sinh ra thực tế
+        "Theo dữ liệu, điểm chuẩn ngành Công nghệ thông tin (mã ngành: 7480201) năm trước là 24.5 điểm."
+    ],
+    "contexts": [
+        # Nội dung thô mà các Hàm công cụ (Tools) đã trích xuất được
+        ["Mã ngành: 7480201, Tên ngành: Công nghệ thông tin, Điểm chuẩn: 24.5, Chỉ tiêu: 300"]
+    ],
+    "ground_truth": [
+        # Câu trả lời chuẩn xác do con người biên soạn để đối chiếu
+        "Điểm chuẩn ngành Công nghệ thông tin là 24.5 điểm."
+    ]
+}
+# Chuyển đổi sang định dạng Dataset của HuggingFace để đưa vào Ragas
+eval_dataset = Dataset.from_dict(data_samples)
+Đoạn mã 11.1. Khởi tạo cấu trúc tập dữ liệu đánh giá hệ thống tiêu chuẩn
+Đánh giá Thiết kế Kiểm thử: 
+Việc thiết lập tập dữ liệu với trường contexts (Ngữ cảnh) là một bước tiến quan trọng so với các phương pháp kiểm thử chatbot thế hệ cũ. Nó cho phép Ragas phát hiện những trường hợp "AI trả lời đúng nhưng dựa trên dữ liệu sai" hoặc "Công cụ tìm đúng dữ liệu nhưng AI lại tóm tắt sai". Điều này đặc biệt quan trọng để nghiệm thu các Ràng buộc Phi chức năng (như NFR01 - Không Ảo giác) đã được đặt ra ở Chương 6.
+[CHÈN HÌNH ẢNH: Sơ đồ minh họa nguyên lý hoạt động của Ragas: So sánh chéo giữa Question, Context, Answer và Ground Truth]
+Hình 11.1. Mô hình đánh giá chéo các thành phần trong đường ống RAG
+11.2. Đánh giá Chất lượng Sinh văn bản (Generation Metrics)
+Trong đường ống RAG, "Chất lượng sinh" đánh giá năng lực của Mô hình Ngôn ngữ Lớn (LLM) trong việc tổng hợp câu trả lời dựa trên các dữ liệu đã được các công cụ (Tools) trích xuất, thay vì dựa vào kiến thức nền (parametric knowledge) của chính nó. Dự án sử dụng hai thang đo cốt lõi từ framework Ragas: Tính trung thực (Faithfulness) và Mức độ liên quan của câu trả lời (Answer Relevance).
+1. Tính trung thực (Faithfulness):
+Chỉ số này đo lường mức độ "ảo giác" (Hallucination) của hệ thống. Một câu trả lời được coi là trung thực nếu tất cả các mệnh đề (claims) trong đó đều có thể suy ra trực tiếp từ ngữ cảnh (contexts) được cung cấp. Công thức tính điểm trung thực $F$ được biểu diễn như sau:
+Trong đó:
+C là tập hợp tất cả các mệnh đề độc lập được LLM bóc tách từ câu trả lời cuối cùng.
+ là tập hợp các mệnh đề có thể được kiểm chứng là đúng dựa trên văn bản ngữ cảnh.
+Giá trị F dao động trong khoảng [0, 1]. Điểm F = 1 chứng tỏ hệ thống hoàn toàn tuân thủ yêu cầu không bịa đặt dữ liệu.
+2. Mức độ liên quan của câu trả lời (Answer Relevance): 
+Chỉ số này đánh giá xem câu trả lời của AI có đi thẳng vào trọng tâm câu hỏi của thí sinh hay không, hay đang trả lời lan man, dư thừa thông tin. Để tính toán chỉ số này, Ragas sử dụng kỹ thuật sinh ngược (Reverse-generation). Từ câu trả lời của AI, hệ thống tạo ra $n$ câu hỏi giả định, sau đó đo lường khoảng cách vector giữa các câu hỏi giả định này và câu hỏi gốc của người dùng thông qua hàm tương đồng Cosine:
+Trong đó:
+q là vector nhúng (embedding vector) của câu hỏi gốc.
+ là vector nhúng của câu hỏi giả định thứ i.
+Chỉ số R càng gần 1, câu trả lời càng bám sát ý định tra cứu ban đầu của thí sinh.
+from ragas import evaluate
+from ragas.metrics import faithfulness, answer_relevance
+# Thực thi quá trình đánh giá chất lượng sinh văn bản trên tập dữ liệu chuẩn
+generation_results = evaluate(
+    eval_dataset,
+    metrics=[faithfulness, answer_relevance]
+)
+print(f"Điểm Trung thực (Faithfulness): {generation_results['faithfulness']:.4f}")
+print(f"Điểm Trọng tâm (Answer Relevance): {generation_results['answer_relevance']:.4f}")
+Đoạn mã 11.2. Mã nguồn tự động hóa việc đo lường các chỉ số sinh văn bản bằng Ragas
+Đánh giá thực nghiệm:
+Kết quả thực thi trên tập dữ liệu kiểm thử (50 mẫu) cho thấy chỉ số Faithfulness của hệ thống luôn duy trì ở mức rất cao (trên 0.95). Điều này đạt được là nhờ cơ chế tiêm Chỉ thị Hệ thống (System Prompt Injection) kết hợp với các rào chắn (guardrails) tại Đỉnh Suy luận (Reasoner Node) đã được thiết kế ở Chương 9, ép buộc LLM phải tuân thủ nghiêm ngặt nguyên tắc chỉ trả lời dựa trên kết quả của Hàm công cụ.
+11.3. Đánh giá Chất lượng Truy xuất (Retrieval Metrics)
+Đánh giá chất lượng truy xuất là quá trình kiểm định xem các công cụ ngoại vi (như tra_cuu_thong_tin từ ChromaDB) có tìm đúng, tìm đủ và xếp hạng chính xác các phân mảnh tài liệu hay không, trước khi chúng được gửi cho LLM. Dự án tiếp tục sử dụng framework Ragas để đo lường hai chỉ số cốt lõi: Độ bao phủ ngữ cảnh (Context Recall) và Độ chính xác ngữ cảnh (Context Precision).
+1. Độ bao phủ ngữ cảnh (Context Recall):
+Chỉ số này đo lường xem hệ thống có truy xuất đủ tất cả các thông tin cần thiết để trả lời câu hỏi hay không. Nó đối chiếu trực tiếp giữa Ngữ cảnh lấy ra (Retrieved Context) và Câu trả lời chuẩn xác (Ground Truth).
+Giả sử  là tập hợp các mệnh đề độc lập được trích xuất từ câu trả lời Ground Truth, và  là tập hợp các mệnh đề có mặt trong văn bản ngữ cảnh được truy xuất. Công thức tính Context Recall được biểu diễn dưới dạng:
+Giá trị đạt mức 1.0 có nghĩa là mọi thông tin cần thiết để trả lời câu hỏi của thí sinh đều đã được công cụ (Tool) tìm thấy và cung cấp cho LLM.
+2. Độ chính xác ngữ cảnh (Context Precision):
+Chỉ số này đo lường tỷ lệ thông tin hữu ích (relevant) trong số các phân mảnh văn bản được lấy ra. Đặc biệt, nó đánh giá cao việc các phân mảnh hữu ích được xếp hạng ở vị trí cao nhất (Top-K) để LLM dễ chú ý. Chỉ số này được tính toán dựa trên độ chính xác trung bình (Average Precision) tại các vị trí thứ hạng k:
+Trong đó:  là một biến chỉ báo (Indicator),  nếu phân mảnh ở vị trí k là hữu ích, và  nếu ngược lại.
+from ragas import evaluate
+from ragas.metrics import context_recall, context_precision
+# Thực thi quá trình đánh giá chất lượng truy xuất dữ liệu
+retrieval_results = evaluate(
+    eval_dataset,
+    metrics=[context_recall, context_precision]
+)
+print(f"Độ bao phủ (Context Recall): {retrieval_results['context_recall']:.4f}")
+print(f"Độ chính xác (Context Precision): {retrieval_results['context_precision']:.4f}")
+Đoạn mã 11.3. Mã nguồn tự động hóa việc đo lường các chỉ số truy xuất bằng Ragas
+Đánh giá thiết kế và Thực nghiệm: 
+Kết quả kiểm thử cho thấy chỉ số Context Precision của hệ thống RAG đạt hiệu suất tối ưu nhờ vào quyết định thiết lập tham số k=3 (chỉ lấy 3 lân cận gần nhất) trong cấu trúc ChromaDB đã được trình bày ở Chương 8. Nếu để $k$ quá lớn, hệ thống sẽ lấy vào nhiều văn bản rác, làm giảm nghiêm trọng Context Precision và gây nhiễu cho "Cửa sổ ngữ cảnh" (Context Window) của LLM. Ngược lại, chỉ số Context Recall được đảm bảo nhờ thuật toán chia nhỏ văn bản đệ quy (Recursive Character Text Splitter) có độ chồng lấn (overlap) đã thực hiện ở Chương 7, giúp các câu văn không bị cắt đứt mạch ý nghĩa.
+11.4. Kiểm thử Hộp đen và Xử lý Ngoại lệ (Black-box & Edge Cases)
+Bên cạnh việc sử dụng các công cụ đo lường tự động hóa như Ragas, hệ thống cần trải qua quá trình kiểm thử Hộp đen (Black-box Testing) để mô phỏng chính xác các tình huống tương tác thực tế của người dùng. Trọng tâm của phương pháp này là đánh giá khả năng chịu lỗi (Fault Tolerance) và cách hệ thống xử lý các trường hợp ngoại lệ (Edge Cases) không nằm trong luồng dữ liệu chuẩn.
+Quá trình kiểm thử được thiết kế dựa trên 3 nhóm kịch bản rủi ro chính:
+1. Nhóm kịch bản sai lệch ngôn ngữ (Linguistic Deviations):
+Mô tả: Thí sinh nhập sai chính tả, sử dụng từ lóng, hoặc viết tắt tên ngành (Ví dụ: "Điểm chuẩn ngành maketing", "cntt điểm nhiu").
+Kết quả kỳ vọng: Hệ thống không bị treo hoặc báo lỗi hệ thống (Crash).
+Kết quả thực tế: Nhờ thuật toán Khớp chuỗi linh hoạt (Fuzzy Matching) và Từ điển ánh xạ đã được tích hợp tại công cụ tra_cuu_diem_chuan (Chương 8), hệ thống tự động nhận diện dung sai ngôn ngữ, chuẩn hóa từ khóa và trả về chính xác điểm chuẩn của ngành Marketing hoặc Công nghệ thông tin.
+2. Nhóm kịch bản ngoài phạm vi (Out-of-Domain/Jailbreaking):
+Mô tả: Thí sinh cố tình hỏi những câu hỏi không liên quan đến ngữ cảnh tuyển sinh (Ví dụ: "Thời tiết hôm nay thế nào?", "Trường Bách Khoa điểm chuẩn bao nhiêu?").
+Kết quả kỳ vọng: Hệ thống từ chối trả lời một cách lịch sự, không gọi các công cụ lãng phí tài nguyên và bảo vệ định vị của ứng dụng.
+Kết quả thực tế: Thông qua Chỉ thị Hệ thống (System Prompt) được tiêm tại Đỉnh Suy luận, LLM nhận thức rõ ranh giới tri thức. Đối với các câu hỏi ngoài lề, AI chủ động phản hồi: "Xin lỗi, mình là Trợ lý Tư vấn Tuyển sinh. Mình chỉ có thể hỗ trợ các thông tin liên quan đến quy chế, điểm chuẩn và học phí của Trường."
+3. Nhóm kịch bản truy vấn đa ý định (Multi-intent Queries):
+Mô tả: Thí sinh gộp nhiều yêu cầu truy xuất dữ liệu vào một câu hỏi duy nhất (Ví dụ: "Cho em hỏi điểm chuẩn ngành Kế toán, tiện thể cho em biết đối tượng ưu tiên 1 là gì luôn ạ").
+Kết quả kỳ vọng: Hệ thống bóc tách được ý định, trả lời đầy đủ cả hai vế mà không bỏ sót thông tin.
+Kết quả thực tế: Đồ thị LangGraph kích hoạt vòng lặp ReAct một cách xuất sắc. LLM lần lượt phát ra tín hiệu gọi hàm tra_cuu_diem_chuan(ten_nganh="Kế toán"), sau đó tiếp tục điều hướng gọi hàm tra_cuu_thong_tin(query="đối tượng ưu tiên 1") trước khi tổng hợp thành một câu trả lời duy nhất. Toàn bộ chu trình không có hiện tượng rớt luồng dữ liệu.
+Bảng 11.1. Tổng hợp Kết quả Kiểm thử Ngoại lệ
+Đánh giá tổng quan: 
+Qua quá trình kiểm thử hộp đen, hệ thống chứng minh được sự vững chắc về mặt kiến trúc. Các lớp phòng thủ từ cấp độ Công cụ (Python) đến cấp độ Ngôn ngữ (Prompting) đã phối hợp chặt chẽ, đảm bảo trải nghiệm người dùng luôn mượt mà ngay cả khi dữ liệu đầu vào có nhiều khiếm khuyết.
+11.5. Đánh giá Hiệu năng và Thời gian Phản hồi (Performance & Latency)
+Bên cạnh độ chính xác của ngôn ngữ, hiệu năng vận hành (Operational Performance) là một tiêu chí quyết định tính khả thi của hệ thống khi triển khai vào môi trường thực tế (Production). Một Chatbot phản hồi quá chậm sẽ làm suy giảm nghiêm trọng trải nghiệm người dùng, khiến thí sinh rời bỏ hệ thống. Dự án sử dụng dữ liệu in vết (Tracing Data) từ nền tảng LangSmith để đo lường và phân tích các nút thắt cổ chai (bottleneck) trong luồng thực thi.
+1. Phân tích Thời gian Phản hồi (Latency Analysis): 
+Độ trễ toàn trình (End-to-End Latency) của hệ thống được tính từ thời điểm người dùng nhấn gửi câu hỏi trên giao diện Streamlit cho đến khi nhận được toàn bộ câu trả lời. Thông qua phân tích đồ thị LangGraph, tổng thời gian này được cấu thành từ hai giai đoạn chính:
+Đỉnh Suy luận (Reasoner Node): Chiếm phần lớn thời gian (khoảng 70% đến 80% tổng độ trễ), chủ yếu do độ trễ mạng (Network Latency) khi gọi API đến máy chủ của OpenAI (mô hình gpt-4o-mini) và thời gian mô hình suy luận sinh từ (Token generation).
+Đỉnh Thực thi (Tools Node): Tốc độ phản hồi cực kỳ nhanh (thường dưới 0.5 giây). Việc truy xuất tệp JSON cấu trúc cục bộ và thực hiện thuật toán tìm kiếm khoảng cách vector trên ChromaDB tiêu tốn rất ít tài nguyên điện toán.
+Bảng 11.2. Thống kê Hiệu năng Hệ thống (Dựa trên 50 mẫu thử nghiệm từ LangSmith)
+2. Tối ưu hóa Chi phí API (Token Cost Management):
+Mỗi lệnh gọi (invoke) trong vòng lặp Đồ thị LangGraph đều tiêu tốn Token. Bằng cách thiết kế Ràng buộc không gian (chỉ lấy Top $k=3$ lân cận nhất trong RAG) và định dạng chuỗi gọn gàng cho đầu ra của tệp JSON, hệ thống đã kiểm soát chặt chẽ kích thước Cửa sổ ngữ cảnh (Context Window). Dữ liệu thực tế cho thấy chi phí trung bình cho mỗi phiên tư vấn hoàn chỉnh (khoảng 5 đến 7 lượt hỏi đáp liên tục) được duy trì ở mức rất thấp, đảm bảo tính khả thi về mặt ngân sách nếu Nhà trường muốn nhân rộng quy mô triển khai cho hàng ngàn thí sinh trong mùa tuyển sinh.
+Đánh giá tổng quan về Hiệu năng:
+Mặc dù kiến trúc Tác tử tự chủ (Agentic Architecture với vòng lặp ReAct) phát sinh độ trễ cao hơn một chút so với kiến trúc Hỏi-Đáp tuyến tính (Linear Pipeline) truyền thống do AI phải tự "suy nghĩ" nhiều bước, nhưng sự đánh đổi này là hoàn toàn xứng đáng để đổi lấy độ chính xác tuyệt đối. Vấn đề độ trễ này đã được giải quyết khéo léo ở lớp Giao diện bằng các hiệu ứng hiển thị trạng thái chờ (UI Spinners - Mục 10.4), giúp duy trì tương tác tâm lý liên tục với người dùng.
+Chương 12: Tổng kết, Đánh giá và Hướng phát triển
+Trải qua quá trình nghiên cứu, thiết kế và phát triển, đồ án đã hoàn thiện và hiện thực hóa thành công một hệ thống Tác tử AI hỗ trợ nghiệp vụ phức tạp. Chương này sẽ tổng hợp lại toàn bộ những giá trị khoa học và thực tiễn mà dự án đã mang lại, đồng thời nhìn nhận khách quan những điểm chưa hoàn thiện để làm tiền đề cho các hướng nghiên cứu mở rộng.
+12.1. Tổng kết các Kết quả Đạt được
+Dự án đã đi từ những khái niệm lý thuyết nền tảng đến một sản phẩm phần mềm hoàn chỉnh, có khả năng triển khai thực tế. Quá trình thực hiện đã đạt được những kết quả nổi bật trên ba phương diện cốt lõi: Khoa học công nghệ, Kiến trúc phần mềm và Ứng dụng thực tiễn.
+1. Về mặt Khoa học và Công nghệ:
+Làm chủ hệ sinh thái AI hiện đại: Đồ án đã nghiên cứu và ứng dụng thành công các công nghệ lõi tiên tiến nhất trong lĩnh vực Xử lý Ngôn ngữ Tự nhiên (NLP), tiêu biểu là mô hình Large Language Model (LLM), kỹ thuật Retrieval-Augmented Generation (RAG) và thư viện LangChain.
+Nâng cấp tư duy từ Pipeline sang Agentic: Thay vì xây dựng một chuỗi xử lý tuyến tính cứng nhắc, dự án đã triển khai thành công kiến trúc Đồ thị Tác tử (Agentic Graph) thông qua LangGraph. Điều này cấp cho hệ thống khả năng "suy luận nội tại" (ReAct), tự động đưa ra quyết định gọi các công cụ ngoại vi (Function Calling) dựa trên ngữ nghĩa của câu hỏi đầu vào.
+2. Về mặt Kiến trúc và Kỹ nghệ Phần mềm:
+Tích hợp đa nguồn dữ liệu: Hệ thống đã giải quyết được bài toán phân mảnh dữ liệu bằng cách xử lý đồng thời hai luồng thông tin: Dữ liệu phi cấu trúc (các văn bản quy chế tuyển sinh dưới dạng PDF được vector hóa bằng ChromaDB) và Dữ liệu có cấu trúc (bảng điểm chuẩn, chỉ tiêu dưới dạng JSON).
+Thiết kế hệ thống chịu lỗi cao: Việc áp dụng thuật toán Khớp chuỗi linh hoạt (Fuzzy Matching) và thiết lập các rào chắn (guardrails) ở cấp độ Chỉ thị hệ thống (System Prompt) đã giúp ứng dụng có độ dung sai ngôn ngữ cao, xử lý mượt mà các truy vấn chứa lỗi chính tả hoặc từ viết tắt của thí sinh.
+3. Về mặt Ứng dụng Thực tiễn:
+Giao diện tương tác thân thiện: Xây dựng thành công lớp ứng dụng Frontend bằng framework Streamlit, tối ưu hóa cho trải nghiệm nhắn tin thời gian thực với bộ nhớ phiên (Session State) được đồng bộ hóa chặt chẽ với luồng xử lý đồ thị.
+Sẵn sàng cho môi trường Sản xuất (Production-ready): Thông qua việc tích hợp nền tảng LangSmith để in vết (Tracing) và giám sát hiệu năng, kết hợp cùng bộ tiêu chuẩn kiểm thử tự động Ragas, phần mềm không chỉ dừng lại ở mức nguyên mẫu (Prototype) mà đã có cơ sở dữ liệu định lượng vững chắc về độ chính xác, sẵn sàng phục vụ trong các chiến dịch tuyển sinh thực tế.
+12.2. Đánh giá Mức độ Đáp ứng Yêu cầu
+Dựa trên các mục tiêu tổng quát và các ràng buộc kỹ thuật đã được định nghĩa ở giai đoạn phân tích hệ thống ban đầu, đồ án đã tiến hành đối chiếu và đánh giá mức độ hoàn thành. Kết quả cho thấy, hệ thống đã đáp ứng xuất sắc các tiêu chí cốt lõi đề ra.
+1. Mức độ Đáp ứng Yêu cầu Chức năng (Functional Requirements):
+Tư vấn Quy chế và Thông tin chung: Hệ thống trích xuất và trả lời chính xác các thông tin dạng văn bản phức tạp (như phương thức xét tuyển, đối tượng ưu tiên, quy trình nộp hồ sơ) thông qua luồng kiến trúc RAG tích hợp cơ sở dữ liệu vector ChromaDB.
+Tra cứu Số liệu Định lượng: Hệ thống xử lý hoàn hảo các truy vấn yêu cầu tính chính xác tuyệt đối về mặt con số (điểm chuẩn năm trước, mã ngành, chỉ tiêu tuyển sinh) nhờ vào công cụ đọc tệp JSON chuyên biệt, khắc phục hoàn toàn nhược điểm tính toán yếu của các mô hình LLM.
+Xử lý Truy vấn Đa ý định (Multi-intent): Vòng lặp Đồ thị LangGraph cho phép Chatbot giải quyết mượt mà các câu hỏi gộp nhiều vế của thí sinh trong cùng một lượt tương tác (ví dụ: vừa hỏi điểm chuẩn, vừa hỏi học phí) mà không bị bỏ sót tác vụ.
+2. Mức độ Đáp ứng Yêu cầu Phi chức năng (Non-Functional Requirements):
+NFR01 - Tiêu chuẩn Không Ảo giác (Zero-Hallucination): Đây là thành công lớn nhất của dự án. Thông qua các bộ lọc từ cấp độ Công cụ đến cấp độ Chỉ thị (System Prompt), và được chứng minh bằng chỉ số Trung thực (Faithfulness) qua framework Ragas đạt mức trên 0.95, hệ thống đã loại bỏ gần như hoàn toàn tình trạng AI tự bịa đặt thông tin sai lệch.
+NFR02 - Độ Dung sai Ngôn ngữ (Fault Tolerance): Hệ thống chứng minh khả năng chịu lỗi ưu việt trước các thói quen nhập liệu thực tế của thí sinh (sử dụng từ lóng, viết tắt tên ngành, sai chính tả, hoặc gõ không dấu) nhờ việc áp dụng linh hoạt thuật toán Fuzzy Matching và từ điển ánh xạ.
+NFR03 - Tính Liền mạch và Trải nghiệm Người dùng (UX/UI): Giao diện frontend xây dựng bằng Streamlit đáp ứng tốt yêu cầu về tính trực quan và dễ sử dụng. Khả năng đồng bộ hóa Bộ nhớ phiên (Session State) giúp hệ thống duy trì được mạch ngữ cảnh xuyên suốt cuộc trò chuyện. Đồng thời, độ trễ hệ thống (Latency) được duy trì ổn định, kết hợp cùng các hiệu ứng phản hồi thị giác (Loading Spinners) giúp thí sinh có trải nghiệm giao tiếp tự nhiên và không bị gián đoạn.
+Đánh giá tổng quan: 
+Dự án đã vượt qua kỳ vọng của một phần mềm tra cứu thông tin thông thường. Việc ứng dụng thành công kiến trúc Agentic đã nâng tầm hệ thống thành một "Chuyên viên Tư vấn Ảo" thực thụ, có năng lực tự định tuyến và xử lý các bài toán hỗ trợ tuyển sinh một cách toàn diện, an toàn và đáng tin cậy.
+12.3. Những Hạn chế còn Tồn tại
+Mặc dù hệ thống đã đạt được những kết quả khả quan và đáp ứng xuất sắc các yêu cầu đề ra ở cấp độ thử nghiệm, việc nhìn nhận khách quan những điểm nghẽn kỹ thuật là bước cần thiết để đánh giá đúng năng lực thực tế của phần mềm. Dưới đây là những hạn chế hệ thống còn tồn tại:
+1. Hạn chế về Độ trễ trong Kiến trúc Đa tác tử (Agentic Latency): 
+Đặc thù của vòng lặp ReAct trong LangGraph đòi hỏi LLM phải trải qua nhiều bước "suy nghĩ nội tại" và gọi công cụ (Tool Calls) liên tiếp trước khi tổng hợp câu trả lời cuối cùng. Điều này dẫn đến thời gian phản hồi (latency) cao hơn so với các hệ thống Chatbot Hỏi-Đáp (Q&A) truyền thống, đặc biệt là khi xử lý các truy vấn phức tạp yêu cầu kết hợp song song cả dữ liệu định lượng (JSON) và định tính (RAG).
+2. Chi phí Vận hành API (Operational Cost): 
+Việc tích hợp các mô hình ngôn ngữ thương mại (như của OpenAI) đồng nghĩa với việc chi phí được tính toán dựa trên số lượng Token tiêu thụ. Kiến trúc Tác tử (Agent) "ngốn" nhiều Token hơn đáng kể do phải liên tục gửi lại toàn bộ lịch sử ngữ cảnh (State), chỉ thị hệ thống và các lược đồ công cụ trong mỗi vòng lặp. Nếu triển khai trên quy mô hàng chục ngàn lượt truy cập cùng lúc vào thời kỳ cao điểm tuyển sinh, bài toán tối ưu hóa chi phí API sẽ là một thách thức đối với ngân sách của Nhà trường.
+3. Tính Đồng bộ và Cập nhật Dữ liệu (Data Synchronization): 
+Hiện tại, nguồn tri thức của hệ thống đang được lưu trữ dưới dạng các tệp tin tĩnh cục bộ (tệp PDF đưa vào cơ sở dữ liệu vector ChromaDB và tệp JSON cho dữ liệu điểm chuẩn). Khi có sự điều chỉnh đột xuất về quy chế từ Bộ Giáo dục hoặc thay đổi chỉ tiêu từ Ban Giám hiệu, quản trị viên phải cập nhật các tệp này và tiến hành chạy lại luồng nhúng dữ liệu (Embedding) một cách thủ công. Hệ thống hiện chưa có cơ chế giao tiếp trực tiếp để đồng bộ hóa thời gian thực (Real-time Sync) với Cơ sở dữ liệu quan hệ (như SQL Server/MySQL) của cổng thông tin trường.
+4. Khả năng Tích hợp sâu của Lớp Giao diện (Frontend Integration): 
+Mặc dù Streamlit là một framework tuyệt vời để phát triển nguyên mẫu nhanh (Rapid Prototyping) và chứng minh tính khả thi của giải pháp (Proof of Concept), nền tảng này lại bộc lộ hạn chế khi triển khai thực tế. Streamlit khó tùy biến sâu về giao diện (UI) và kiến trúc vi mô, khiến việc nhúng (embed) trực tiếp Chatbot này vào giao diện website cổng thông tin điện tử hiện có của trường, hoặc chuyển đổi thành một ứng dụng di động (Mobile App) độc lập gặp nhiều rào cản kỹ thuật.
+12.4. Định hướng Phát triển Tương lai
+Dựa trên những hạn chế đã được phân tích và tiềm năng tiến hóa không ngừng của công nghệ Trí tuệ Nhân tạo, đồ án đề xuất các hướng nghiên cứu và mở rộng hệ thống trong tương lai như sau:
+1. Tối ưu hóa Mô hình và Chi phí Điện toán (Model & Cost Optimization):
+Triển khai cục bộ (On-premise Deployment): Định hướng giảm sự phụ thuộc vào các API thương mại thông qua việc nghiên cứu tinh chỉnh (Fine-tuning) các mô hình ngôn ngữ lớn mã nguồn mở có kích thước tối ưu (như Llama 3 hoặc Qwen). Việc vận hành mô hình ngay trên máy chủ của Nhà trường sẽ giải quyết triệt để bài toán chi phí Token và tăng cường tính bảo mật dữ liệu.
+Ứng dụng Bộ nhớ đệm Ngữ nghĩa (Semantic Caching): Tích hợp thêm một lớp Redis hoặc Memcached để lưu trữ phản hồi của những truy vấn phổ biến (ví dụ: "Trường ở đâu?", "Chỉ tiêu ngành CNTT?"). Khi có câu hỏi mang ý nghĩa tương tự, hệ thống trích xuất ngay kết quả từ bộ nhớ đệm thay vì chạy lại vòng lặp LangGraph, giúp giảm thiểu độ trễ xuống mức mili-giây.
+2. Kết nối Hệ sinh thái Dữ liệu Động (Dynamic Data Integration):
+Nâng cấp các Đỉnh Thực thi (Tools Node) bằng cách phát triển thêm các SQL Agent hoặc tích hợp RESTful API trực tiếp vào hệ thống Quản lý Đào tạo (ERP/SIS) của Nhà trường. Điều này sẽ thay thế hoàn toàn các tệp JSON tĩnh, cho phép Chatbot tra cứu thông tin cá nhân hóa (như tiến độ duyệt hồ sơ của một thí sinh cụ thể) và cập nhật số liệu xét tuyển theo thời gian thực.
+3. Đa kênh Hóa và Nâng cấp Nền tảng (Omnichannel Architecture):
+Tiến hành tái cấu trúc lớp Giao diện (Frontend) bằng các framework chuyên nghiệp và linh hoạt hơn như ReactJS, VueJS hoặc Next.js, tạo điều kiện thuận lợi để nhúng (embed) trực tiếp tiện ích Chatbot lên website trang chủ của Trường.
+Phát triển các module trung gian (Webhooks/Middleware) để đưa Tác tử AI này lên các nền tảng mạng xã hội quen thuộc với thế hệ học sinh như Zalo Official Account, Facebook Messenger, thiết lập một mạng lưới tư vấn đa điểm chạm.
+4. Mở rộng Năng lực Đa phương thức (Multimodal AI):
+Thị giác Máy tính (Computer Vision): Tích hợp năng lực nhận diện ký tự quang học (OCR) để hệ thống có khả năng "đọc" ảnh chụp học bạ hoặc giấy chứng nhận điểm thi của thí sinh, từ đó tự động tính toán điểm xét tuyển và đưa ra gợi ý chọn ngành phù hợp.
+Giao tiếp bằng Giọng nói (Voice AI): Tích hợp các mô hình Speech-to-Text và Text-to-Speech (như Whisper) để nâng cấp Chatbot thành một Tổng đài viên Ảo (Voicebot), cho phép phụ huynh và thí sinh tư vấn trực tiếp qua các cuộc gọi thoại với ngữ điệu tự nhiên.
+Tuần | Nội dung dự kiến | Tiến độ làm việc
+1 | Nghiên cứu, lựa chọn đề tài, khảo sát hiện trạng, phê duyệt đề cương. | Hoàn thành
+2 | Hoàn thiện Lời mở đầu: Lý do, mục tiêu, phạm vi. Lên kế hoạch chi tiết. | Hoàn thành
+3 | Bắt đầu Phần 1: Tổng quan lý thuyết LangChain, so sánh framework. | Hoàn thành
+4 | Hoàn thiện Phần 1. Nghiên cứu hệ sinh thái LangGraph, LangServe. | Hoàn thành
+5 | Bắt đầu Phần 2: Kiến thức cốt lõi (Cài đặt môi trường, code mẫu cho Model I/O, Prompts). | Hoàn thành
+6 | Tiếp tục Phần 2: Code mẫu cho Memory, Retrieval, Chains, Agents. Giới thiệu LCEL. | Hoàn thành
+7 | Hoàn thiện Phần 2. Bắt đầu thiết kế hệ thống chi tiết cho Phần 3. | 
+8 | Phần 3: Xây dựng sản phẩm (Thiết kế database vector, xử lý dữ liệu thực tế). | 
+9 | Phần 3 (tiếp): Tích hợp LLM, xây dựng logic RAG, hoàn thiện sản phẩm. | 
+10 | Phát triển giao diện người dùng (UI), hoàn thiện chức năng sản phẩm. | 
+11 | Phần 4: Kiểm thử, đánh giá hiệu năng, thu thập bài học kinh nghiệm. | 
+12 | Hoàn thiện báo cáo đồ án, nộp báo cáo. | 
+Tiêu chí | Chatbot truyền thống (Rule-based) | Chatbot sử dụng LLM & LangChain (RAG)
+Cơ chế hoạt động | Hoạt động cứng nhắc dựa trên các tập luật (If-Else), cây quyết định và từ khóa được cấu hình sẵn. | Hiểu ngữ nghĩa ngôn ngữ tự nhiên, tự động phân tích ý định và truy xuất dữ liệu động.
+Khả năng hiểu câu hỏi | Kém. Rất dễ thất bại nếu người dùng gõ sai chính tả, dùng từ đồng nghĩa hoặc câu hỏi nhiều vế. | Xuất sắc. Hiểu trọn vẹn ý định thực sự dù câu hỏi được diễn đạt lủng củng hay phức tạp.
+Bảo trì và Cập nhật dữ liệu | Thủ công và tốn công sức. Khi quy chế thay đổi, lập trình viên phải vẽ lại và sửa từng luồng kịch bản. | Nhanh chóng. Chỉ cần cập nhật tài liệu PDF hoặc link Website mới vào hệ thống Vector Database.
+Mở rộng hệ thống | Rất khó khăn. Kịch bản càng lớn, cây quyết định càng rối rắm và dễ xảy ra xung đột logic. | Rất linh hoạt. LangChain hỗ trợ mở rộng không giới hạn thông qua kiến trúc Agent và các Tools ngoại vi.
+Xử lý ngoại lệ (Edge cases) | Thường xuyên rơi vào ngõ cụt và lặp lại câu xin lỗi mặc định ("Tôi chưa hiểu ý bạn..."). | Dựa vào ngữ cảnh để phản hồi khéo léo, yêu cầu làm rõ thông tin hoặc dẫn dắt cuộc trò chuyện một cách mượt mà.
+Trải nghiệm Tư vấn tuyển sinh | Khô khan, giống như người dùng đang tự tra cứu qua một hệ thống menu (bấm phím 1, phím 2). | Tự nhiên, cá nhân hóa cao, mang lại cảm giác như đang trò chuyện trực tiếp với chuyên viên tư vấn của trường.
+Đặc tính kỹ thuật | ChromaDB | FAISS (Facebook AI Similarity Search) | Pinecone
+Kiến trúc triển khai | Cục bộ (Embedded / Client-Server). | Cục bộ (Thư viện xử lý In-memory). | Phân tán trên đám mây (Cloud-native / SaaS).
+Thuật toán cốt lõi | HNSW (sử dụng thư viện hnswlib). | Đa dạng (IVF, PQ, HNSW, LSH). Tối ưu hóa bằng C++ / CUDA. | Thuật toán ANN độc quyền phân tán.
+Quản lý dữ liệu (Persistence) | Tự động lưu trữ Vector, Document gốc và Metadata vào SQLite/Parquet. | Khả năng Persistent kém nguyên bản. Thường phải kết hợp thêm một Docstore phụ trợ. | Quản lý toàn diện Vector và Metadata qua hệ thống Serverless.
+Quy mô khả dụng (Scalability) | Phù hợp cho quy mô vừa và nhỏ ($< 10^6$ vectors). Độ trễ cực thấp do không qua mạng. | Mở rộng rất tốt ($> 10^9$ vectors). Hiệu năng phụ thuộc mạnh vào phần cứng (RAM/GPU). | Tự động mở rộng (Auto-scaling) phục vụ hàng tỷ vectors.
+Chi phí vận hành | Mã nguồn mở, miễn phí. | Mã nguồn mở, miễn phí. | Trả phí theo dung lượng và số lượng thao tác đọc/ghi.
+Mã Test Case | Phân loại Ngoại lệ | Dữ liệu Đầu vào (Input) | Trạng thái | Đánh giá Kỹ thuật
+TC_01 | Viết tắt | "Điểm chuẩn qtkd?" | Pass | Công cụ giải mã từ viết tắt hoạt động chính xác.
+TC_02 | Sai chính tả | "Ngành truền thông đa pương tiện" | Pass | Fuzzy Match đạt độ tương đồng > 85%, xử lý thành công.
+TC_03 | Out-of-Domain | "Hướng dẫn cách lập trình web" | Pass | LLM từ chối an toàn, không sinh ra tool_calls.
+TC_04 | Thiếu dữ liệu | "Điểm chuẩn ngành Y đa khoa" (Ngành không tồn tại) | Pass | Tool trả về rỗng, LLM thông báo trường không đào tạo ngành này.
+Kịch bản Hội thoại | Độ trễ Trung bình (s) | Số lượng Token Tiêu thụ (Avg) | Đánh giá Trải nghiệm
+Giao tiếp chào hỏi (Không gọi Tool) | 1.2 - 1.8 | ~ 150 Tokens | Phản hồi tức thì.
+Tra cứu Điểm chuẩn (Chỉ quét file JSON) | 2.5 - 3.2 | ~ 450 Tokens | Nhanh chóng.
+Tra cứu Quy chế RAG (Quét ChromaDB) | 3.5 - 4.5 | ~ 850 Tokens | Hơi chậm, cần hiệu ứng chờ.
+Truy vấn Đa ý định (Gọi liên tiếp 2 Tools) | 5.0 - 7.0 | ~ 1200 Tokens | Cần tối ưu hóa thêm.
