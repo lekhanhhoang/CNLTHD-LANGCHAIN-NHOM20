@@ -1,6 +1,5 @@
 import json
 import os
-import difflib
 from langchain_core.tools import tool
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
@@ -13,7 +12,6 @@ def tra_cuu_thong_tin(query: str) -> str:
     """
     Tra cứu thông tin chung về đề án tuyển sinh, quy chế, học phí và các thông tin phi cấu trúc khác từ tài liệu PDF.
     Sử dụng công cụ này khi thí sinh hỏi về chính sách hoặc các thông tin chung.
-    Tuyệt đối KHÔNG dùng công cụ này để tra cứu điểm chuẩn.
     """
     try:
         if not os.path.exists(DB_DIR):
@@ -26,7 +24,7 @@ def tra_cuu_thong_tin(query: str) -> str:
         docs = vectorstore.similarity_search(query, k=3)
         
         if not docs:
-            return "Hệ thống không tìm thấy thông tin liên quan trong tài liệu tuyển sinh. Yêu cầu tham khảo thêm nguồn khác."
+            return "Không tìm thấy thông tin liên quan trong tài liệu tuyển sinh."
             
         return "\n\n".join([doc.page_content for doc in docs])
     except Exception as e:
@@ -46,33 +44,13 @@ def tra_cuu_diem_chuan(query: str) -> str:
         with open(json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        # Chuyển đổi query về chữ thường
-        search_term = query.lower().strip()
-        
-        # Lớp 1: Từ điển viết tắt / từ lóng
-        tu_dien = {
-            "cntt": "công nghệ",
-            "maketing": "marketing",
-            "qtkd": "quản trị kinh doanh"
-        }
-        # Chỉ áp dụng từ điển nếu tìm thấy từ khóa
-        for k, v in tu_dien.items():
-            if k in search_term:
-                search_term = search_term.replace(k, v)
-
+        # Chuyển đổi query về chữ thường để tìm kiếm linh hoạt (partial matching)
+        search_term = query.lower()
         results = []
-        
-        # Lớp 2: Fuzzy Match để bắt lỗi chính tả, thiếu dấu
-        danh_sach_ten_nganh = [item["ten_nganh"].lower() for item in data]
-        # difflib.get_close_matches sẽ tìm các từ có độ tương đồng >= 60%
-        fuzzy_matches = difflib.get_close_matches(search_term, danh_sach_ten_nganh, n=2, cutoff=0.5)
 
         for item in data:
-            ten_nganh = item["ten_nganh"].lower()
-            ma_nganh = item["ma_nganh"].lower()
-            
-            # Khớp chuỗi trực tiếp HOẶC khớp mã trực tiếp HOẶC nằm trong gợi ý mờ (Fuzzy Match)
-            if search_term in ten_nganh or search_term == ma_nganh or ten_nganh in fuzzy_matches:
+            # Tìm kiếm theo tên ngành (partial match) hoặc mã ngành (exact match)
+            if search_term in item["ten_nganh"].lower() or search_term == item["ma_nganh"].lower():
                 res = (
                     f"📍 Ngành: {item['ten_nganh']} ({item['ma_nganh']})\n"
                     f"- Khối xét tuyển: {', '.join(item['to_hop_xet_tuyen'])}\n"
