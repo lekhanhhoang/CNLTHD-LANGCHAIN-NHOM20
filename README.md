@@ -1,4 +1,4 @@
-# 🎓 Trợ lý Tư vấn Tuyển sinh Đại học Công nghệ XYZ (Admissions AI Agent)
+# 🎓 Hệ thống Tư vấn Tuyển sinh Giáo dục Đại học
 
 [![Framework](https://img.shields.io/badge/Framework-LangChain-green)](https://python.langchain.com/)
 [![Graph](https://img.shields.io/badge/Orchestration-LangGraph-blue)](https://langchain-ai.github.io/langgraph/)
@@ -31,7 +31,7 @@ Hệ thống được thiết kế để hoạt động như một chuyên viên
 | Họ tên | Vai trò |
 | :--- | :--- |
 | **Lê Khánh Hoàng** | Phát triển hệ thống (AI Engineer) |
-
+| **Trương Xuân Hưng** | Phát triển hệ thống (AI Engineer) |
 ---
 
 ## 🏗️ Kiến trúc hệ thống
