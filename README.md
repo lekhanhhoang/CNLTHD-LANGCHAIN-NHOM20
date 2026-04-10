@@ -32,6 +32,7 @@ Hệ thống được thiết kế để hoạt động như một chuyên viên
 | :--- | :--- |
 | **Lê Khánh Hoàng** | Phát triển hệ thống (AI Engineer) |
 | **Trương Xuân Hưng** | Phát triển hệ thống (AI Engineer) |
+| **Lê Quốc Nam** | Phát triển hệ thống (AI Engineer) |
 ---
 
 ## 🏗️ Kiến trúc hệ thống
