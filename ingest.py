@@ -1,4 +1,5 @@
 import os
+import shutil
 from dotenv import load_dotenv
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -11,10 +12,16 @@ load_dotenv()
 def ingest_directory(directory_path: str, persist_directory: str = "./chroma_db"):
     """
     Xử lý tất cả tệp PDF trong thư mục tuyển sinh, chia nhỏ văn bản và lưu vào ChromaDB.
+    Tự động xóa dữ liệu cũ trước khi nạp mới.
     """
     if not os.path.exists(directory_path):
         print(f"⚠️ Lỗi: Không tìm thấy thư mục {directory_path}. Vui lòng tạo thư mục.")
         return
+
+    # Tự động xóa thư mục ChromaDB cũ nếu tồn tại
+    if os.path.exists(persist_directory):
+        print(f"🧹 Đang xóa dữ liệu cũ tại {persist_directory}...")
+        shutil.rmtree(persist_directory)
 
     print(f"🚀 Bắt đầu nạp toàn bộ dữ liệu PDF từ thư mục: {directory_path}...")
 
