@@ -8,6 +8,22 @@ st.set_page_config(page_title="Hệ thống Tư vấn Tuyển sinh", page_icon="
 st.title("🎓 Hệ thống Tư vấn Tuyển sinh Giáo dục Đại học")
 st.markdown("---")
 
+# Cấu hình thanh Sidebar (NFR04: Tính dễ sử dụng & Dọn dẹp State)
+with st.sidebar:
+    st.markdown("## 🤖 Trợ lý Ảo Tuyển sinh")
+    st.markdown("---")
+    st.markdown("""
+    **📚 HƯỚNG DẪN:**
+    - Gõ mã ngành hoặc tên ngành (VD: KTPM, MKT) để tra cứu điểm chuẩn.
+    - Đặt các câu hỏi về học phí, quy chế mở để RAG tìm trong tài liệu.
+    """)
+    st.markdown("---")
+    st.info("💡 **Mẹo:** Dùng nút bên dưới để xóa các vòng lặp hội thoại cũ và tạo luồng nhận thức mới cho AI.")
+    if st.button("🔄 Dọn dẹp bộ nhớ (Reset)"):
+        st.session_state.messages = []
+        st.session_state.thread_id = str(uuid.uuid4())
+        st.rerun()
+
 # Khởi tạo session state
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -32,7 +48,7 @@ if prompt := st.chat_input("Hỏi về điểm chuẩn, học phí, ngành học
 
     # Phản hồi từ AI
     with st.chat_message("assistant"):
-        with st.spinner("Đang tra cứu cơ sở dữ liệu và xử lý..."):
+        with st.spinner("Đang tìm kiếm và tổng hợp thông tin..."):
             try:
                 # Chạy luồng LangGraph
                 # Chúng ta truyền thêm profile trống nếu cần, hoặc để Agent tự thu thập
