@@ -47,7 +47,7 @@ def ingest_directory(directory_path: str, persist_directory: str = "./chroma_db"
         persist_directory=persist_directory
     )
     
-    print("✨ Hoàn tất! Dữ liệu tuyển sinh đã sẵn sàng để tra cứu.")
+    print("✨ Đã lưu trữ thành công! Dữ liệu tuyển sinh đã sẵn sàng để tra cứu.")
 
 if __name__ == "__main__":
     # Đường dẫn thư mục PDF tuyển sinh

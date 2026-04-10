@@ -28,7 +28,7 @@ llm_with_tools = llm.bind_tools(admissions_tools)
 
 # 2. Định nghĩa các Node trong Graph
 
-def reasoner(state: AgentState):
+def reasoner_node(state: AgentState):
     """
     Node xử lý chính: Nhận câu hỏi, áp dụng Persona và quyết định dùng Tool hay trả lời.
     """
@@ -37,7 +37,7 @@ def reasoner(state: AgentState):
         "Nhiệm vụ của bạn là tư vấn thông tin tuyển sinh, điểm chuẩn, học phí và thông tin xét tuyển của nhiều trường đại học khác nhau dựa trên tập dữ liệu RAG đề án tuyển sinh mà bạn kết nối.\n"
         "Phong cách: Chuyên nghiệp, khách quan, chào đón và cực kỳ chính xác.\n\n"
         "QUY TẮC CỐT LÕI:\n"
-        "1. Bạn PHẢI sử dụng công cụ tra cứu dữ liệu để tìm thông tin tuyển sinh cụ thể của từng trường đại học mà người dùng nhắc tới. KHÔNG ĐƯỢC tự bịa con số.\n"
+        "1. Bạn PHẢI sử dụng công cụ tra cứu dữ liệu để tìm thông tin tuyển sinh cụ thể của từng trường đại học mà người dùng nhắc tới. Tuyệt đối Không tự bịa dữ liệu.\n"
         "2. Nếu công cụ không trả về dữ liệu về trường đó, hãy trả lời trung thực là bạn chưa có dữ liệu của trường đó trong hệ thống.\n"
         "3. Luôn phản hồi bằng Tiếng Việt lịch sự, định dạng câu trả lời rõ ràng."
     ))
@@ -49,7 +49,7 @@ def reasoner(state: AgentState):
     return {"messages": [response]}
 
 # Node chạy Tool tự động
-tool_node = ToolNode(admissions_tools)
+tools_node = ToolNode(admissions_tools)
 
 # 3. Định nghĩa Logic điều hướng (Routing)
 
@@ -62,6 +62,10 @@ def should_continue(state: AgentState) -> Literal["tools", END]:
     
     # Nếu có tool_calls, đi tiếp sang node 'tools'
     if last_message.tool_calls:
+        # print("\n\n" + "="*60)
+        # import json
+        # print(json.dumps(last_message.tool_calls, indent=2, ensure_ascii=False))
+        # print("="*60 + "\n\n")
         return "tools"
     
     # Nếu không, kết thúc hội thoại
@@ -72,24 +76,24 @@ def should_continue(state: AgentState) -> Literal["tools", END]:
 workflow = StateGraph(AgentState)
 
 # Thêm các nút
-workflow.add_node("reasoner", reasoner)
-workflow.add_node("tools", tool_node)
+workflow.add_node("reasoner_node", reasoner_node)
+workflow.add_node("tools_node", tools_node)
 
 # Thiết lập điểm bắt đầu
-workflow.add_edge(START, "reasoner")
+workflow.add_edge(START, "reasoner_node")
 
 # Thiết lập quan hệ rẽ nhánh từ reasoner
 workflow.add_conditional_edges(
-    "reasoner",
+    "reasoner_node",
     should_continue,
     {
-        "tools": "tools",
+        "tools": "tools_node",
         END: END
     }
 )
 
 # Sau khi chạy tool xong, bắt buộc quay lại reasoner để tổng hợp kết quả
-workflow.add_edge("tools", "reasoner")
+workflow.add_edge("tools_node", "reasoner_node")
 
 # 5. Biên dịch Workflow
 app = workflow.compile(checkpointer=MemorySaver())
