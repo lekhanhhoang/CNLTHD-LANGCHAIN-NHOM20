@@ -28,11 +28,11 @@ Hệ thống được thiết kế để hoạt động như một chuyên viên
 ---
 
 ## 👤 Thành viên thực hiện
-| Họ tên | Vai trò |
-| :--- | :--- |
-| **Lê Khánh Hoàng** | Phát triển hệ thống (AI Engineer) |
-| **Trương Xuân Hưng** | Phát triển hệ thống (AI Engineer) |
-| **Lê Quốc Nam** | Phát triển hệ thống (AI Engineer) |
+| Họ tên | Vai trò | Công việc phụ trách |
+| :--- | :--- | :--- |
+| **Lê Khánh Hoàng** | Trưởng nhóm | Phát triển hệ thống AI, Xây dựng kiến trúc LangGraph, RAG và Frontend |
+| **Trương Xuân Hưng** | Thành viên | Xây dựng nội dung báo cáo Chương 11 và Chương 12 |
+| **Lê Quốc Nam** | Thành viên | Xây dựng nội dung báo cáo Chương 1, Chương 2 và Chương 3 |
 ---
 
 ## 🏗️ Kiến trúc hệ thống
